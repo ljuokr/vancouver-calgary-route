@@ -101,6 +101,15 @@
     border:2px solid #fff;
     box-shadow:0 1px 4px rgba(0,0,0,.4);
   }
+  /* Mond-Badge: Spot funktioniert auch bei später Ankunft (~21 Uhr) */
+  .pin-moon{
+    position:absolute;top:-8px;left:-8px;
+    width:19px;height:19px;border-radius:50%;
+    background:#243b6b;
+    font-size:11px;line-height:19px;text-align:center;
+    border:2px solid #fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.4);
+  }
   .pin.must{background:var(--must)}
   .pin.wandern{background:var(--wandern)}
   .pin.paddeln{background:var(--paddeln)}
@@ -209,6 +218,17 @@
   body.tip-off .leaflet-top{top:calc(var(--sat) + 118px)}
   .leaflet-control-attribution{font-size:9px}
 
+  /* Gut sichtbare Massstabsleiste unten links */
+  .leaflet-control-scale{margin:0 0 calc(var(--sab) + 14px) 14px!important}
+  .leaflet-control-scale-line{
+    background:rgba(255,255,255,.94);
+    border:2px solid var(--ink);border-top:none;
+    color:var(--ink);font-size:.74rem;font-weight:700;
+    padding:2px 7px;line-height:1.35;
+    box-shadow:0 2px 8px rgba(8,60,73,.28);
+  }
+  .leaflet-control-scale-line:not(:first-child){border-top:2px solid var(--ink);border-bottom:none;margin-top:-2px}
+
   /* ---------- Desktop-Anpassung (mobile first, dann hoch) ---------- */
   @media (min-width:760px){
     header{left:20px;right:auto;width:380px}
@@ -225,7 +245,7 @@
 <header>
   <div class="title-card">
     <h1>Vancouver → Calgary: Roadtrip durch die Rockies</h1>
-    <p>2 Varianten: Coquihalla &amp; Sea-to-Sky (Whistler) · antippen für Details</p>
+    <p>Via Sea-to-Sky, Whistler &amp; die Rockies · antippen für Details</p>
   </div>
   <div class="chips" id="chips">
     <button class="chip" data-cat="all"><span class="dot"></span>Alle</button>
@@ -373,9 +393,6 @@ const PLACES = [
    meta:"Albert Canyon · Becken Mai bis Sep"},
 
   // ---------- Stopps & Städte ----------
-  {cat:"stopp", name:"Hope", lat:49.379978, lng:-121.441585,
-   note:"Erster grösserer Halt raus aus dem Grossraum Vancouver, bekannt für Kettensägen-Schnitzereien und als Drehort von „Rambo“. Tanken und Kaffee vor der Bergstrecke.",
-   meta:"BC · ca. 1,5 Std. ab Vancouver"},
   {cat:"stopp", name:"Kamloops", lat:50.675827, lng:-120.339415,
    note:"Trockene, sonnige Stadt am Zusammenfluss zweier Flüsse, typischer erster Übernachtungsstopp. Halbwüstenlandschaft, gutes Angebot an Motels und Diners.",
    meta:"BC · ca. 3,5 Std. ab Vancouver"},
@@ -463,31 +480,6 @@ const PLACES = [
    meta:"Cheakamus Crossing · ca. 2 km retour"},
 
   // ---------- Übernachtung (spontan, Schlafen im Auto) ----------
-  {cat:"schlafen", name:"Silver Lake Provincial Park", lat:49.2795, lng:-121.418,
-   note:"Naechste legale Uebernachtung ab Hope, 25 Plaetze mit first-come-Anteil, Pit-Toiletten, Seewasser, Schotterzufahrt.",
-   cost:"~18 CAD",
-   link:"https://bcparks.ca/silver-lake-park/",
-   meta:"Hope · Provincial Park"},
-  {cat:"schlafen", name:"Britton Creek Rest Area", spaet:"Jederzeit zugänglich; Übernachten offiziell nicht erlaubt, zum Ausruhen aber breit geduldet.", lat:49.6165, lng:-120.941,
-   note:"Saubere WC, teils Foodtruck. Schlafen im Auto wird geduldet, ist an BC-Rastplaetzen aber offiziell nicht erlaubt (nur Ermuedungspause bis 8 h).",
-   warn:"Overnight offiziell verboten, nur geduldet",
-   cost:"gratis",
-   meta:"Coquihalla Hwy 5 · Rastplatz"},
-  {cat:"schlafen", name:"Walmart Supercentre Merritt", spaet:"Ja - geduldet, spät ankommen ok; Wohnmobile ans hintere Lot-Ende, kurz an der Kasse fragen.", lat:50.1076, lng:-120.7998,
-   note:"Eine Nacht geduldet, hell und ruhig nahe Highway; Septic-Dump beim Canadian Tire; kurz im Laden fragen.",
-   cost:"gratis",
-   link:"https://ioverlander.com/places/67943-walmart-merritt",
-   meta:"Merritt · Walmart-Parkplatz"},
-  {cat:"schlafen", name:"Kentucky-Alleyne Provincial Park", lat:49.908, lng:-120.567,
-   note:"First-come (nicht reservierbar), 58 Plaetze an zwei Seen, Pit-Toiletten, kein Trinkwasser, oft auch spontan Platz.",
-   cost:"~20 CAD",
-   link:"https://bcparks.ca/kentucky-alleyne-park/",
-   meta:"sued Merritt · Provincial Park"},
-  {cat:"schlafen", name:"Stump Lake Recreation Site", lat:50.3831, lng:-120.3344,
-   note:"Gratis-Rec-Site am See, 4 Plaetze first-come, schmale Schotterzufahrt (nicht fuer grosse Anhaenger), max. 14 Tage.",
-   cost:"gratis",
-   link:"https://www.sitesandtrailsbc.ca/",
-   meta:"sued Kamloops · BC Rec Site"},
   {cat:"schlafen", name:"Skimikin Lake Recreation Site", lat:50.7186, lng:-119.4192,
    note:"36 Plaetze first-come ohne Reservation, Toiletten + Tische, Selbstzahler-Box, max. 14 Tage.",
    cost:"~12 CAD",
@@ -628,23 +620,6 @@ const PLACES = [
    meta:"Calgary NW · Walmart"},
 
   // ---------- Zuverlässige Spontan-Optionen (RV-Parks / Camping, After-hours) ----------
-  {cat:"schlafen", name:"Telte-Yet Campsite", lat:49.383658, lng:-121.448539,
-   note:"Von der First Nation betriebener Platz mitten in Hope am Fluss, unkompliziert und zentral.",
-   cost:"~35-40 CAD",
-   spaet:"Echter Walk-in ohne Reservation: Zettel an der Bürotür, Platz nehmen, am Platz oder morgens einchecken und zahlen - ideal fürs spontane Spätankommen.",
-   meta:"Hope · Stadtcamping"},
-  {cat:"schlafen", name:"Coquihalla Campground (Hope)", lat:49.38041, lng:-121.42652,
-   note:"Grosser Platz am Coquihalla-Fluss mitten in Hope (rund 117 Plätze).",
-   cost:"~47-55 CAD",
-   spaet:"Durch die Grösse fast immer Walk-in-Platz frei; Büro bis in den Abend besetzt, sonst kurz anrufen für die Platzzuweisung.",
-   link:"https://www.coquihallacampground.ca/",
-   meta:"Hope · Campground"},
-  {cat:"schlafen", name:"Claybanks RV Park", lat:50.10516, lng:-120.79342,
-   note:"Stadteigener Platz am Coldwater River, 5 Min zu Fuss ins Zentrum Merritt.",
-   cost:"~35-50 CAD",
-   spaet:"Rund um die Uhr online über LetsCamp.ca buchbar - vom Handy Platz nehmen und direkt anfahren.",
-   link:"https://www.claybanksrv.ca/",
-   meta:"Merritt · RV-Park (Stadt)"},
   {cat:"schlafen", name:"Kamloops RV Park", lat:50.654706, lng:-120.077342,
    note:"Ganzjähriger RV-Park mit Platzwart und Sicherheit im Osten von Kamloops.",
    cost:"~40-45 CAD",
@@ -745,11 +720,16 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
   attribution:'&copy; OpenStreetMap &copy; CARTO', maxZoom:19
 }).addTo(map);
 
-// Routenlinie entlang der Trans-Canada / Coquihalla (Vancouver -> Calgary)
+// Route: Sea-to-Sky/Whistler (West) + Trans-Canada durch die Rockies (Ost), Vancouver -> Calgary
 const ROUTE = [
   [49.2827,-123.1207], // Vancouver
-  [49.3800,-121.4416], // Hope
-  [50.1113,-120.7862], // Merritt (Coquihalla)
+  [49.6981,-123.1559], // Squamish
+  [50.1147,-122.9560], // Whistler
+  [50.3204,-122.8081], // Pemberton
+  [50.3474,-122.4772], // Joffre Lakes
+  [50.4052,-122.3122], // Duffey Lake
+  [50.6939,-121.9337], // Lillooet
+  [50.8132,-121.3242], // Cache Creek
   [50.6758,-120.3394], // Kamloops
   [50.7001,-119.2838], // Salmon Arm
   [50.9980,-118.1957], // Revelstoke
@@ -764,36 +744,23 @@ const ROUTE = [
 const ROUTE_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--route').trim() || '#55606b';
 const routeLine = L.polyline(ROUTE, {
   color:ROUTE_COLOR, weight:4, opacity:.85, dashArray:'2 9', lineCap:'round'
-}).addTo(map).bindTooltip('Standard: über Hope & Coquihalla', {sticky:true});
-
-// Variante über Whistler (Sea-to-Sky Hwy 99 + Duffey Lake Rd), trifft bei Kamloops wieder auf die Hauptroute
-const ROUTE_WHISTLER = [
-  [49.2827,-123.1207], // Vancouver
-  [49.6981,-123.1559], // Squamish
-  [50.1147,-122.9560], // Whistler
-  [50.3204,-122.8081], // Pemberton
-  [50.3474,-122.4772], // Joffre Lakes
-  [50.4052,-122.3122], // Duffey Lake
-  [50.6939,-121.9337], // Lillooet
-  [50.8132,-121.3242], // Cache Creek
-  [50.6758,-120.3394]  // Kamloops (zurück auf die Hauptroute)
-];
-const routeLineWhistler = L.polyline(ROUTE_WHISTLER, {
-  color:ROUTE_COLOR, weight:4, opacity:.85, dashArray:'11 8', lineCap:'round'
-}).addTo(map).bindTooltip('Variante: Sea-to-Sky über Whistler', {sticky:true});
+}).addTo(map).bindTooltip('Route: Sea-to-Sky / Whistler & Trans-Canada', {sticky:true});
 
 // Start-/Zielpunkte markieren
 [['Vancouver',ROUTE[0]],['Calgary',ROUTE[ROUTE.length-1]]].forEach(([n,ll]) => {
   L.marker(ll, {icon:L.divIcon({className:'', html:`<div class="pin" style="background:var(--lake)">${n==='Vancouver'?'🏁':'🎯'}</div>`, iconSize:[38,38], iconAnchor:[19,36]})})
     .addTo(map).bindTooltip(n, {direction:'top', offset:[0,-34]});
 });
-map.fitBounds(L.featureGroup([routeLine, routeLineWhistler]).getBounds(), {padding:[50,50]});
+map.fitBounds(routeLine.getBounds(), {padding:[50,50]});
+
+// Gut sichtbare Massstabsleiste, immer unten angezeigt
+L.control.scale({position:'bottomleft', metric:true, imperial:true, maxWidth:160}).addTo(map);
 
 const markers = [];
 PLACES.forEach(p => {
   const icon = L.divIcon({
     className:'',
-    html:`<div class="pin ${p.cat}">${CATS[p.cat].emoji}${p.warn ? '<span class="pin-badge">!</span>' : ''}</div>`,
+    html:`<div class="pin ${p.cat}">${CATS[p.cat].emoji}${p.warn ? '<span class="pin-badge">!</span>' : ''}${p.spaet ? '<span class="pin-moon">🌙</span>' : ''}</div>`,
     iconSize:[38,38], iconAnchor:[19,36]
   });
   const m = L.marker([p.lat, p.lng], {icon}).addTo(map);
