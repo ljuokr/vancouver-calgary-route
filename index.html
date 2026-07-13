@@ -82,12 +82,22 @@
 
   /* ---------- Marker ---------- */
   .pin{
+    position:relative;
     display:flex;align-items:center;justify-content:center;
     width:38px;height:38px;border-radius:50% 50% 50% 6px;
     transform:rotate(0deg);
     font-size:19px;line-height:1;
     border:2.5px solid #fff;
     box-shadow:0 3px 10px rgba(8,60,73,.35);
+  }
+  /* Warn-Badge auf Pins mit Zugangsregeln (Pass/Reservation/Shuttle/Saison) */
+  .pin-badge{
+    position:absolute;top:-7px;right:-7px;
+    width:19px;height:19px;border-radius:50%;
+    background:#d92d20;color:#fff;
+    font-size:13px;font-weight:900;line-height:19px;text-align:center;
+    border:2px solid #fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.4);
   }
   .pin.must{background:var(--must)}
   .pin.wandern{background:var(--wandern)}
@@ -122,6 +132,15 @@
   .sheet .tag.stopp{background:var(--stopp)}
   .sheet .tag.rnd{background:var(--rnd)}
   .sheet h2{font-size:1.25rem;font-weight:800;line-height:1.25;margin-bottom:6px}
+  /* Warnhinweis im Sheet bei Orten mit Zugangsregeln */
+  .sheet .warnbox{
+    display:flex;gap:8px;align-items:flex-start;
+    background:#fff4e6;border-left:4px solid #d92d20;
+    border-radius:10px;padding:9px 11px;margin:2px 0 10px;
+    font-size:.84rem;line-height:1.4;color:#7a2f17;font-weight:600;
+  }
+  .sheet .warnbox::before{content:"⚠️";font-size:1rem;flex:0 0 auto}
+  .sheet .warnbox[hidden]{display:none}
   .sheet .note{font-size:.92rem;line-height:1.55;color:#454c53}
   .sheet .meta{font-size:.8rem;color:#79828a;margin-top:10px}
   .sheet a.route{
@@ -210,7 +229,7 @@
   </div>
   <div class="tip" id="joffreTip" role="button" tabindex="0" aria-label="Hinweis Joffre Lakes Day-Pass, antippen für Details">
     <span class="tip-ic">⚠️</span>
-    <span class="tip-tx"><b>Joffre Lakes:</b> Day-Pass Pflicht (Mai–Okt), spontan nicht möglich - 2 Tage vorher ab 7 Uhr buchen. Antippen für Details.</span>
+    <span class="tip-tx"><b>Pins mit rotem „!"</b> haben Zugangsregeln (Pass, Reservation, Shuttle oder Saison). Wichtig: <b>Joffre Lakes</b> braucht einen Gratis-Day-Pass, 2 Tage vorher ab 7 Uhr - spontan geht nicht. Antippen für Details.</span>
     <button class="tip-x" id="joffreTipX" aria-label="Hinweis schliessen">×</button>
   </div>
 </header>
@@ -221,6 +240,7 @@
   <div class="grabber"></div>
   <span class="tag" id="sheetTag"></span>
   <h2 id="sheetTitle"></h2>
+  <div class="warnbox" id="sheetWarn" hidden></div>
   <p class="note" id="sheetNote"></p>
   <p class="meta" id="sheetMeta"></p>
   <a class="route" id="sheetRoute" target="_blank" rel="noopener">Route in Google Maps</a>
@@ -240,16 +260,16 @@ const CATS = {
 
 const PLACES = [
   // ---------- Highlights ----------
-  {cat:"must", name:"Lake Louise", lat:51.4171, lng:-116.2179,
+  {cat:"must", name:"Lake Louise", warn:"Parkplatz oft vor Sonnenaufgang voll - Shuttle oder Parkreservation", lat:51.4171, lng:-116.2179,
    note:"Der türkise Klassiker der Rockies vor dem Victoria-Gletscher, hinter dem Fairmont-Chateau. Früh dran sein: der Parkplatz ist im Sommer oft schon am Morgen voll (Shuttle nutzen). Kanuverleih am Ufer.",
    meta:"Banff NP · Parken früh oder Parks-Canada-Shuttle"},
-  {cat:"must", name:"Moraine Lake", lat:51.3217, lng:-116.1860,
+  {cat:"must", name:"Moraine Lake", warn:"Kein Privatauto - Zufahrt nur per Shuttle/Bus", lat:51.3217, lng:-116.1860,
    note:"Das Motiv vom alten 20-Dollar-Schein: tiefblauer See im Valley of the Ten Peaks. Privatautos sind gesperrt, Zufahrt nur mit Shuttle oder Rovers. Zum Sonnenaufgang am schönsten.",
    meta:"Banff NP · nur per Shuttle erreichbar"},
   {cat:"must", name:"Peyto Lake", lat:51.7169, lng:-116.5265,
    note:"Fuchskopfförmiger Gletschersee in leuchtendem Türkis, kurzer Weg zum Aussichtsdeck. Liegt am Icefields Parkway, ca. 40 Min. nördlich von Lake Louise (Abstecher).",
    meta:"Icefields Pkwy · Abstecher ab Lake Louise"},
-  {cat:"must", name:"Takakkaw Falls", lat:51.4996, lng:-116.4757,
+  {cat:"must", name:"Takakkaw Falls", warn:"Zufahrtsstrasse nur ca. Ende Juni bis Oktober offen", lat:51.4996, lng:-116.4757,
    note:"Mit 254 m einer der höchsten Wasserfälle Kanadas, gespeist vom Daly-Gletscher. Die Zufahrtsstrasse hat enge Spitzkehren (keine grossen Wohnmobile), im Sommer geöffnet.",
    meta:"Yoho NP · Strasse Ende Juni bis Okt"},
   {cat:"must", name:"Bow Falls", lat:51.167410, lng:-115.560901,
@@ -306,7 +326,7 @@ const PLACES = [
    meta:"Canmore · Einstiege am Bow River"},
 
   // ---------- Aussicht & Pässe ----------
-  {cat:"aussicht", name:"Rogers Pass", lat:51.301314, lng:-117.521161,
+  {cat:"aussicht", name:"Rogers Pass", warn:"Im Winter Lawinen-Strassensperren möglich", lat:51.301314, lng:-117.521161,
    note:"Höhepunkt der Fahrt durch den Glacier-Nationalpark (1330 m), berüchtigt für Lawinen und die langen Schneegalerien. Discovery Centre mit Café und Ausstellung.",
    meta:"Glacier NP · Discovery Centre am Pass"},
   {cat:"aussicht", name:"Kicking Horse Pass", lat:51.4472, lng:-116.3130,
@@ -321,7 +341,7 @@ const PLACES = [
   {cat:"aussicht", name:"Surprise Corner", lat:51.167623, lng:-115.559828,
    note:"Der Postkarten-Aussichtspunkt auf das Fairmont Banff Springs Hotel über dem Bow River. Startpunkt des kurzen Wegs zu den Hoodoos.",
    meta:"Banff · Parkplatz Buffalo St"},
-  {cat:"aussicht", name:"Meadows in the Sky Parkway", lat:51.0230, lng:-118.1930,
+  {cat:"aussicht", name:"Meadows in the Sky Parkway", warn:"Strasse erst ab Sommer, oberste Kehren nur per Shuttle", lat:51.0230, lng:-118.1930,
    note:"26 km Panoramastrasse den Mount Revelstoke hinauf bis fast zum Gipfel, oben im Sommer Bergwiesen voller Blumen. Letzte Kehren per Shuttle.",
    meta:"Mt Revelstoke NP · Strasse ab Juli offen"},
   {cat:"aussicht", name:"Hoodoos Viewpoint", lat:51.1873, lng:-115.5330,
@@ -335,7 +355,7 @@ const PLACES = [
   {cat:"therme", name:"Radium Hot Springs", lat:50.620073, lng:-116.076059,
    note:"Grosses, mineralreiches Thermalbecken am Tor zum Kootenay-Park. Liegt südlich der Route (Abstecher über Hwy 93), lohnt als Schlenker oder eigener Tag.",
    meta:"Kootenay NP · Abstecher ab Banff/Golden"},
-  {cat:"therme", name:"Canyon Hot Springs", lat:51.136817, lng:-117.858688,
+  {cat:"therme", name:"Canyon Hot Springs", warn:"Nur Sommersaison (Becken Mai bis Sep)", lat:51.136817, lng:-117.858688,
    note:"Thermalbecken mit Campground direkt an der Trans-Canada zwischen Revelstoke und Rogers Pass. Praktischer Zwischenstopp, nur im Sommer offen.",
    meta:"Albert Canyon · Becken Mai bis Sep"},
 
@@ -366,10 +386,10 @@ const PLACES = [
   {cat:"rnd", name:"Last Spike (Craigellachie)", lat:50.9700, lng:-118.7220,
    note:"Hier wurde 1885 der letzte Nagel der ersten transkontinentalen Eisenbahn Kanadas eingeschlagen. Kleine Gedenkstätte mit Souvenirladen direkt an der Strasse.",
    meta:"Craigellachie, BC · frei"},
-  {cat:"rnd", name:"The Enchanted Forest", lat:50.972155, lng:-118.565541,
+  {cat:"rnd", name:"The Enchanted Forest", warn:"Nur Saison (ca. Mai bis Sep)", lat:50.972155, lng:-118.565541,
    note:"Skurriler Märchenwald von 1960: über 350 handgemachte Figuren und das höchste Baumhaus in BC, mitten im Wald an der Trans-Canada. Herrlich altmodisch.",
    meta:"bei Revelstoke · Mai bis Sep, Eintritt"},
-  {cat:"rnd", name:"Three Valley Gap", lat:50.933828, lng:-118.445762,
+  {cat:"rnd", name:"Three Valley Gap", warn:"Ghost Town nur saisonal geöffnet", lat:50.933828, lng:-118.445762,
    note:"Knallrotes Chateau an einem Bergsee plus rekonstruiertes Geister-Städtchen mit über 25 historischen Gebäuden. Kitschig-kurioser Fotostopp westlich von Revelstoke.",
    meta:"bei Revelstoke · Ghost Town saisonal"},
   {cat:"rnd", name:"Spiral Tunnels", lat:51.4448, lng:-116.3120,
@@ -398,7 +418,7 @@ const PLACES = [
   {cat:"must", name:"Shannon Falls", lat:49.666496, lng:-123.162577,
    note:"Mit 335 m der dritthöchste Wasserfall BCs, wenige Schritte vom Highway. Direkt neben der Talstation der Sea to Sky Gondola.",
    meta:"bei Squamish · kurzer Weg, frei"},
-  {cat:"must", name:"Joffre Lakes", lat:50.347352, lng:-122.477233,
+  {cat:"must", name:"Joffre Lakes", warn:"Gratis-Day-Pass Pflicht - 2 Tage vorher ab 7 Uhr (PT) buchen", lat:50.347352, lng:-122.477233,
    note:"Drei leuchtend türkise Gletscherseen, gestaffelt am Aufstieg - eines der meistfotografierten Ziele BCs. WICHTIG: vom 11. Mai bis 25. Okt 2026 gilt rund um die Uhr Day-Pass-Pflicht. Spontan aufkreuzen geht nicht - ohne Pass weist der Ranger am Trailhead ab, es gibt keine Walk-up- oder First-come-Plätze (auch kein First-come-Parking). Der Pass ist gratis, muss aber 2 Tage im Voraus ab 7 Uhr (Pazifikzeit) online bei BC Parks gebucht werden (nicht telefonisch, nicht über die Camping-Seite). Beliebte Tage sind um 7 Uhr rasch weg. Alternative ohne eigenes Buchen: der Park-Bus-Shuttle ab Downtown Vancouver (ca. 8.30 Uhr, rund 60-94 CAD retour) - Pass inklusive. Zusätzlich gesperrt 20.-27. Juni und 8.-30. Sept 2026 (First-Nations-Praktiken). Übernachtungsgäste mit Camping-Reservation brauchen keinen Extra-Pass.",
    meta:"Duffey Lake Rd · Gratis-Pass Pflicht, 2 Tage vorab 7 Uhr online"},
   {cat:"must", name:"Sea to Sky Gondola", lat:49.675100, lng:-123.157044,
@@ -407,7 +427,7 @@ const PLACES = [
   {cat:"wandern", name:"Stawamus Chief", lat:49.689491, lng:-123.133808,
    note:"Gewaltiger Granitmonolith über Squamish, einer der bekanntesten Aufstiege BCs: steil über Ketten und Leitern zu drei Gipfeln mit Blick über den Fjord.",
    meta:"Squamish · 6 km retour · +600 hm, steil"},
-  {cat:"wandern", name:"Garibaldi Lake", lat:49.9542, lng:-123.1195,
+  {cat:"wandern", name:"Garibaldi Lake", warn:"Day-Pass in der Hauptsaison nötig (ab Rubble Creek)", lat:49.9542, lng:-123.1195,
    note:"Anstrengende, aber grandiose Wanderung zu einem gletscherblauen Bergsee im Garibaldi Park. Day-Pass in der Hauptsaison nötig, ab Rubble-Creek-Parkplatz.",
    meta:"18 km retour · +820 hm · Day-Pass"},
   {cat:"wandern", name:"Brandywine Falls", lat:50.046881, lng:-123.117805,
@@ -484,7 +504,7 @@ const markers = [];
 PLACES.forEach(p => {
   const icon = L.divIcon({
     className:'',
-    html:`<div class="pin ${p.cat}">${CATS[p.cat].emoji}</div>`,
+    html:`<div class="pin ${p.cat}">${CATS[p.cat].emoji}${p.warn ? '<span class="pin-badge">!</span>' : ''}</div>`,
     iconSize:[38,38], iconAnchor:[19,36]
   });
   const m = L.marker([p.lat, p.lng], {icon}).addTo(map);
@@ -499,6 +519,9 @@ function openSheet(p){
   document.getElementById('sheetTag').textContent = CATS[p.cat].emoji + ' ' + CATS[p.cat].label;
   document.getElementById('sheetTag').className = 'tag ' + p.cat;
   document.getElementById('sheetTitle').textContent = p.name;
+  const w = document.getElementById('sheetWarn');
+  w.textContent = p.warn || '';
+  w.hidden = !p.warn;
   document.getElementById('sheetNote').textContent = p.note;
   document.getElementById('sheetMeta').textContent = p.meta || '';
   document.getElementById('sheetRoute').href =
