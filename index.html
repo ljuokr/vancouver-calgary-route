@@ -19,6 +19,7 @@
     --therme:#c2417f;      /* Thermen-Magenta */
     --stopp:#6b5b95;       /* Stopp-Violett */
     --rnd:#b07c10;         /* Kurioses-Bernstein */
+    --schlaf:#7d5a3c;      /* Übernachtung/Schlafen-Braun */
     --radius:16px;
     --shadow:0 6px 24px rgba(8,60,73,.18);
     --sat:env(safe-area-inset-top,0px);
@@ -76,7 +77,8 @@
   .chip[data-cat="therme"] .dot{background:var(--therme)}
   .chip[data-cat="stopp"] .dot{background:var(--stopp)}
   .chip[data-cat="rnd"] .dot{background:var(--rnd)}
-  .chip[data-cat="all"] .dot{background:conic-gradient(var(--must) 0 14.3%,var(--wandern) 14.3% 28.6%,var(--paddeln) 28.6% 42.9%,var(--aussicht) 42.9% 57.1%,var(--therme) 57.1% 71.4%,var(--stopp) 71.4% 85.7%,var(--rnd) 85.7% 100%)}
+  .chip[data-cat="schlafen"] .dot{background:var(--schlaf)}
+  .chip[data-cat="all"] .dot{background:conic-gradient(var(--must) 0 12.5%,var(--wandern) 12.5% 25%,var(--paddeln) 25% 37.5%,var(--aussicht) 37.5% 50%,var(--therme) 50% 62.5%,var(--stopp) 62.5% 75%,var(--rnd) 75% 87.5%,var(--schlaf) 87.5% 100%)}
   .chip.off{opacity:.45}
   .chip.off .dot{background:#9aa3ab !important}
 
@@ -106,6 +108,7 @@
   .pin.therme{background:var(--therme)}
   .pin.stopp{background:var(--stopp)}
   .pin.rnd{background:var(--rnd)}
+  .pin.schlafen{background:var(--schlaf)}
 
   /* ---------- Bottom Sheet ---------- */
   .sheet{
@@ -131,6 +134,7 @@
   .sheet .tag.therme{background:var(--therme)}
   .sheet .tag.stopp{background:var(--stopp)}
   .sheet .tag.rnd{background:var(--rnd)}
+  .sheet .tag.schlafen{background:var(--schlaf)}
   .sheet h2{font-size:1.25rem;font-weight:800;line-height:1.25;margin-bottom:6px}
   /* Warnhinweis im Sheet bei Orten mit Zugangsregeln */
   .sheet .warnbox{
@@ -142,6 +146,12 @@
   .sheet .warnbox::before{content:"⚠️";font-size:1rem;flex:0 0 auto}
   .sheet .warnbox[hidden]{display:none}
   .sheet .note{font-size:.92rem;line-height:1.55;color:#454c53}
+  /* Fakten-Block: Gehzeit, Kosten, Verpflegung, Website */
+  .sheet .facts{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .sheet .facts[hidden]{display:none}
+  .sheet .fact{display:flex;gap:8px;font-size:.85rem;line-height:1.4;color:#454c53}
+  .sheet .fact>span:first-child{flex:0 0 auto}
+  .sheet .fact a{color:var(--lake);font-weight:700;word-break:break-word}
   .sheet .meta{font-size:.8rem;color:#79828a;margin-top:10px}
   .sheet a.route{
     display:inline-block;margin-top:14px;
@@ -226,6 +236,7 @@
     <button class="chip" data-cat="therme"><span class="dot"></span>♨️ Thermen</button>
     <button class="chip" data-cat="stopp"><span class="dot"></span>🏙️ Stopps</button>
     <button class="chip" data-cat="rnd"><span class="dot"></span>🎲 Kurioses</button>
+    <button class="chip" data-cat="schlafen"><span class="dot"></span>🚐 Schlafen</button>
   </div>
   <div class="tip" id="joffreTip" role="button" tabindex="0" aria-label="Hinweis Joffre Lakes Day-Pass, antippen für Details">
     <span class="tip-ic">⚠️</span>
@@ -242,6 +253,7 @@
   <h2 id="sheetTitle"></h2>
   <div class="warnbox" id="sheetWarn" hidden></div>
   <p class="note" id="sheetNote"></p>
+  <div class="facts" id="sheetFacts" hidden></div>
   <p class="meta" id="sheetMeta"></p>
   <a class="route" id="sheetRoute" target="_blank" rel="noopener">Route in Google Maps</a>
 </div>
@@ -255,21 +267,22 @@ const CATS = {
   aussicht: {label:"Aussicht & Pass", emoji:"🏔️"},
   therme:   {label:"Therme",          emoji:"♨️"},
   stopp:    {label:"Stopp & Stadt",   emoji:"🏙️"},
-  rnd:      {label:"Kurioses",        emoji:"🎲"}
+  rnd:      {label:"Kurioses",        emoji:"🎲"},
+  schlafen: {label:"Übernachtung (spontan)", emoji:"🚐"}
 };
 
 const PLACES = [
   // ---------- Highlights ----------
-  {cat:"must", name:"Lake Louise", warn:"Parkplatz oft vor Sonnenaufgang voll - Shuttle oder Parkreservation", lat:51.4171, lng:-116.2179,
+  {cat:"must", name:"Lake Louise", link:"https://parks.canada.ca/pn-np/ab/banff/visit/parkbus/louise", cost:"Gratis; Nationalpark-Pass 12,25 CAD/Tag (19.6.-7.9.2026 gratis); P&R+Shuttle 12,75 CAD", essen:"Fairmont Chateau (Cafe/Restaurants) am See; Dorf Lake Louise 5 min", warn:"Parkplatz oft vor Sonnenaufgang voll - Shuttle oder Parkreservation", lat:51.4171, lng:-116.2179,
    note:"Der türkise Klassiker der Rockies vor dem Victoria-Gletscher, hinter dem Fairmont-Chateau. Früh dran sein: der Parkplatz ist im Sommer oft schon am Morgen voll (Shuttle nutzen). Kanuverleih am Ufer.",
    meta:"Banff NP · Parken früh oder Parks-Canada-Shuttle"},
-  {cat:"must", name:"Moraine Lake", warn:"Kein Privatauto - Zufahrt nur per Shuttle/Bus", lat:51.3217, lng:-116.1860,
+  {cat:"must", name:"Moraine Lake", link:"https://parks.canada.ca/pn-np/ab/banff/visit/parkbus/louise", cost:"Autos ganzjaehrig gesperrt; Parks-Canada-Shuttle retour 12,75 CAD + 3,50 CAD Gebuehr", essen:"Keine Verpflegung vor Ort; Essen im Dorf Lake Louise", warn:"Kein Privatauto - Zufahrt nur per Shuttle/Bus", lat:51.3217, lng:-116.1860,
    note:"Das Motiv vom alten 20-Dollar-Schein: tiefblauer See im Valley of the Ten Peaks. Privatautos sind gesperrt, Zufahrt nur mit Shuttle oder Rovers. Zum Sonnenaufgang am schönsten.",
    meta:"Banff NP · nur per Shuttle erreichbar"},
-  {cat:"must", name:"Peyto Lake", lat:51.7169, lng:-116.5265,
+  {cat:"must", name:"Peyto Lake", link:"https://www.banfflakelouise.com/things-to-do/peyto-lake", cost:"Gratis; Parken gratis; Nationalpark-Pass (Sommer 2026 gratis)", essen:"Keine Verpflegung; naechstes Essen Bow Lake / Lake Louise", lat:51.7169, lng:-116.5265,
    note:"Fuchskopfförmiger Gletschersee in leuchtendem Türkis, kurzer Weg zum Aussichtsdeck. Liegt am Icefields Parkway, ca. 40 Min. nördlich von Lake Louise (Abstecher).",
    meta:"Icefields Pkwy · Abstecher ab Lake Louise"},
-  {cat:"must", name:"Takakkaw Falls", warn:"Zufahrtsstrasse nur ca. Ende Juni bis Oktober offen", lat:51.4996, lng:-116.4757,
+  {cat:"must", name:"Takakkaw Falls", link:"https://parks.canada.ca/pn-np/bc/yoho/activ/chutes-falls", cost:"Gratis; Parken gratis; Nationalpark-Pass (Zufahrt Ende Juni-Okt.)", essen:"Keine Verpflegung; naechstes Essen in Field", warn:"Zufahrtsstrasse nur ca. Ende Juni bis Oktober offen", lat:51.4996, lng:-116.4757,
    note:"Mit 254 m einer der höchsten Wasserfälle Kanadas, gespeist vom Daly-Gletscher. Die Zufahrtsstrasse hat enge Spitzkehren (keine grossen Wohnmobile), im Sommer geöffnet.",
    meta:"Yoho NP · Strasse Ende Juni bis Okt"},
   {cat:"must", name:"Bow Falls", lat:51.167410, lng:-115.560901,
@@ -283,13 +296,13 @@ const PLACES = [
    meta:"Banff · Eintritt, National Historic Site"},
 
   // ---------- Wandern ----------
-  {cat:"wandern", name:"Lake Agnes Tea House", lat:51.4287, lng:-116.2308,
+  {cat:"wandern", name:"Lake Agnes Tea House", link:"https://www.lakeagnesteahouse.com/", cost:"Gratis (Wanderung); Teehaus nur Bargeld; Parkplatz Lake Louise oft voll", essen:"Teehaus am See (Tee, Suppen, Sandwiches; nur Bargeld)", dauer:"2-3 Std. retour", lat:51.4287, lng:-116.2308,
    note:"Beliebteste Wanderung ab Lake Louise: gut 3,5 km bergauf zu einem See mit historischem Teehaus (seit 1905, nur Bargeld). Weiter zum Big Beehive für den Rundblick.",
    meta:"ca. 7 km retour · +400 hm"},
-  {cat:"wandern", name:"Plain of Six Glaciers", lat:51.4030, lng:-116.2670,
+  {cat:"wandern", name:"Plain of Six Glaciers", link:"https://www.plainofsixglaciers.com/", cost:"Gratis (Wanderung); Teehaus nur Bargeld", essen:"Teehaus (Tee, Suppen, Gebaeck; nur Bargeld) kurz vor dem Ziel", dauer:"4-6 Std. retour", lat:51.4030, lng:-116.2670,
    note:"Wanderung am Ufer von Lake Louise entlang bis unter den Victoria-Gletscher, zweites Teehaus am Weg. Lässt sich mit Lake Agnes zur grossen Runde verbinden.",
    meta:"ca. 14 km retour · +365 hm"},
-  {cat:"wandern", name:"Johnston Canyon", lat:51.2453, lng:-115.8407,
+  {cat:"wandern", name:"Johnston Canyon", link:"https://parks.canada.ca/pn-np/ab/banff/activ/randonnee-hiking/johnston", cost:"Gratis; Parken gratis; Nationalpark-Pass (Sommer 2026 gratis)", essen:"Johnston Canyon Lodge (Bistro/Cafe) am Trailhead", dauer:"1-2 Std. (Lower + Upper Falls)", lat:51.2453, lng:-115.8407,
    note:"Stege durch eine enge Schlucht zu Lower und Upper Falls, weiter zu den Ink Pots. Sehr beliebt, darum früh oder abends gehen. Zwischen Banff und Lake Louise am Bow Valley Parkway.",
    meta:"Lower Falls 2,4 km · Ink Pots 12 km retour"},
   {cat:"wandern", name:"Larch Valley & Sentinel Pass", lat:51.3280, lng:-116.1870,
@@ -298,10 +311,10 @@ const PLACES = [
   {cat:"wandern", name:"Tunnel Mountain", lat:51.176892, lng:-115.561557,
    note:"Kurzer Gipfel direkt über Banff mit Blick über Ort und Bow Valley. Guter Einlaufweg am Ankunftstag, in gut einer Stunde oben.",
    meta:"4,6 km retour · +260 hm"},
-  {cat:"wandern", name:"Grassi Lakes", lat:51.081324, lng:-115.395050,
+  {cat:"wandern", name:"Grassi Lakes", link:"https://www.albertaparks.ca/parks/kananaskis/canmore-nordic-centre-pp/", cost:"Gratis; aber Kananaskis Conservation Pass 15 CAD/Tag pro Auto Pflicht", essen:"Keine Verpflegung; Canmore 5-10 min", dauer:"1-1,5 Std. retour", lat:51.081324, lng:-115.395050,
    note:"Familientaugliche Wanderung bei Canmore zu zwei knallgrünen Bergseen, oben Kletterfelsen und ein kleiner Wasserfall. Leichte oder etwas steilere Route wählbar.",
    meta:"Canmore · ca. 4 km retour"},
-  {cat:"wandern", name:"Wapta Falls", lat:51.1725, lng:-116.5605,
+  {cat:"wandern", name:"Wapta Falls", link:"https://parks.canada.ca/pn-np/bc/yoho", cost:"Gratis; Parken gratis; Nationalpark-Pass (Sommer 2026 gratis)", essen:"Keine Verpflegung; naechstes Essen in Field", dauer:"1,5-2 Std. retour", lat:51.1725, lng:-116.5605,
    note:"Breitester Wasserfall des Kicking Horse River, einfacher Waldweg im südlichen Yoho. Wenig überlaufen, guter Beine-vertreten-Stopp Richtung Golden.",
    meta:"Yoho NP · 4,6 km retour, flach"},
   {cat:"wandern", name:"Giant Cedars Boardwalk", lat:51.0435, lng:-118.1360,
@@ -309,7 +322,7 @@ const PLACES = [
    meta:"Mt Revelstoke NP · 0,5 km Rundweg"},
 
   // ---------- Paddeln ----------
-  {cat:"paddeln", name:"Emerald Lake", lat:51.4429, lng:-116.5289,
+  {cat:"paddeln", name:"Emerald Lake", link:"https://parks.canada.ca/pn-np/bc/yoho", cost:"Gratis; Parken gratis; Nationalpark-Pass Yoho (Sommer 2026 gratis)", essen:"Emerald Lake Lodge (Restaurant, Cilantro Cafe) am See", lat:51.4429, lng:-116.5289,
    note:"Smaragdgrüner See in Yoho, ruhiger als Lake Louise. Kanuverleih an der Lodge, dazu ein flacher Rundweg ums Ufer. Auf dem Weg der berühmte Natural Bridge.",
    meta:"Yoho NP · Kanuverleih an der Lodge"},
   {cat:"paddeln", name:"Vermilion Lakes", lat:51.184337, lng:-115.590649,
@@ -318,7 +331,7 @@ const PLACES = [
   {cat:"paddeln", name:"Two Jack Lake", lat:51.2258, lng:-115.4772,
    note:"Ruhiger See östlich von Banff mit Bergkulisse, beliebt zum Paddeln und für den Campground. Weniger touristisch als die grossen Namen.",
    meta:"Banff · bei Lake Minnewanka Loop"},
-  {cat:"paddeln", name:"Lake Minnewanka", lat:51.2530, lng:-115.4110,
+  {cat:"paddeln", name:"Lake Minnewanka", link:"https://parks.canada.ca/pn-np/ab/banff/activ/minnewanka", cost:"Gratis; Parken gratis; Nationalpark-Pass; Bootsfahrt optional ~75 CAD", essen:"Kiosk/Cafe am Bootssteg; Banff Town 15 min", lat:51.2530, lng:-115.4110,
    note:"Grösster See im Banff-Park, gut 20 km lang. Kajak, Bootstour oder nur die Uferpromenade. Sturmböen möglich, darum Wetter beachten.",
    meta:"Banff · Verleih und Bootscruise vor Ort"},
   {cat:"paddeln", name:"Bow River (Canmore)", lat:51.089703, lng:-115.370507,
@@ -332,7 +345,7 @@ const PLACES = [
   {cat:"aussicht", name:"Kicking Horse Pass", lat:51.4472, lng:-116.3130,
    note:"Kontinentale Wasserscheide und Provinzgrenze BC/Alberta auf 1627 m. Hier trennen sich die Flüsse Richtung Pazifik und Atlantik.",
    meta:"Grenze BC/Alberta, Trans-Canada"},
-  {cat:"aussicht", name:"Banff Gondola (Sulphur Mtn)", lat:51.147902, lng:-115.555447,
+  {cat:"aussicht", name:"Banff Gondola (Sulphur Mtn)", link:"https://www.banffjaspercollection.com/attractions/banff-gondola/", cost:"Gondel Erw. ab ~90 CAD am Schalter (online guenstiger); Parken 17,50 CAD/Tag", essen:"Sky Bistro Restaurant + Cafe auf dem Gipfel", lat:51.147902, lng:-115.555447,
    note:"Gondel auf den Sulphur Mountain (2281 m): Rundum-Panorama über sechs Bergketten, Stege am Grat, Restaurant oben. Alternativ zu Fuss hoch.",
    meta:"Banff · Gondel kostenpflichtig"},
   {cat:"aussicht", name:"Lake Louise Gondola", lat:51.4443, lng:-116.1580,
@@ -349,13 +362,13 @@ const PLACES = [
    meta:"Banff · frei zugänglich"},
 
   // ---------- Thermen ----------
-  {cat:"therme", name:"Banff Upper Hot Springs", lat:51.150864, lng:-115.560598,
+  {cat:"therme", name:"Banff Upper Hot Springs", link:"https://parks.canada.ca/pn-np/ab/banff/sources-banff-springs", cost:"Erw. 19,75 CAD (nur vor Ort) + Nationalpark-Pass; Parken 17,50 CAD/Tag", essen:"Kleines Cafe am Eingang; Banff Town 5 min", lat:51.150864, lng:-115.560598,
    note:"Historisches Thermalbad auf 1585 m mit dampfendem Aussenbecken und Bergblick. Nach einem Wandertag ideal, abends am ruhigsten. Badesachen mietbar.",
    meta:"Banff · ganzjährig, Eintritt"},
-  {cat:"therme", name:"Radium Hot Springs", lat:50.620073, lng:-116.076059,
+  {cat:"therme", name:"Radium Hot Springs", link:"https://parks.canada.ca/pn-np/bc/kootenay/sources-radium-springs", cost:"Erw. 19,75 CAD (nur vor Ort, keine Onlinebuchung) + Nationalpark-Pass Kootenay", essen:"Cafe/Restaurants im Dorf Radium Hot Springs nahebei", lat:50.620073, lng:-116.076059,
    note:"Grosses, mineralreiches Thermalbecken am Tor zum Kootenay-Park. Liegt südlich der Route (Abstecher über Hwy 93), lohnt als Schlenker oder eigener Tag.",
    meta:"Kootenay NP · Abstecher ab Banff/Golden"},
-  {cat:"therme", name:"Canyon Hot Springs", warn:"Nur Sommersaison (Becken Mai bis Sep)", lat:51.136817, lng:-117.858688,
+  {cat:"therme", name:"Canyon Hot Springs", link:"https://www.canyonhotsprings.com/", cost:"Tageskarte Erw. 25,50 CAD, Kinder/Senioren 22 CAD (offen ca. 15.5.-20.9.2026)", essen:"Bistro/Cafe im Resort vor Ort", warn:"Nur Sommersaison (Becken Mai bis Sep)", lat:51.136817, lng:-117.858688,
    note:"Thermalbecken mit Campground direkt an der Trans-Canada zwischen Revelstoke und Rogers Pass. Praktischer Zwischenstopp, nur im Sommer offen.",
    meta:"Albert Canyon · Becken Mai bis Sep"},
 
@@ -415,16 +428,16 @@ const PLACES = [
   {cat:"stopp", name:"Lillooet", lat:50.693938, lng:-121.933691,
    note:"Heisses, trockenes Städtchen am Fraser River, historischer Goldrausch-Ort (Mile 0). Landschaftlicher Bruch: von Gletschern zur Halbwüste. Hier zurück Richtung Trans-Canada.",
    meta:"BC · Übergang zur Hwy 99/97"},
-  {cat:"must", name:"Shannon Falls", lat:49.666496, lng:-123.162577,
+  {cat:"must", name:"Shannon Falls", link:"https://bcparks.ca/shannon-falls-park/", cost:"Gratis; Parken gratis", essen:"Keine Verpflegung (Picknick); Squamish 5 min", lat:49.666496, lng:-123.162577,
    note:"Mit 335 m der dritthöchste Wasserfall BCs, wenige Schritte vom Highway. Direkt neben der Talstation der Sea to Sky Gondola.",
    meta:"bei Squamish · kurzer Weg, frei"},
-  {cat:"must", name:"Joffre Lakes", warn:"Gratis-Day-Pass Pflicht - 2 Tage vorher ab 7 Uhr (PT) buchen", lat:50.347352, lng:-122.477233,
+  {cat:"must", name:"Joffre Lakes", link:"https://bcparks.ca/joffre-lakes-park/", cost:"Gratis; kostenloser Tagespass Pflicht (11.5.-25.10.2026); Parken gratis", essen:"Keine Verpflegung; Pemberton / Mount Currie", dauer:"4-5 Std. retour (bis Upper Lake)", warn:"Gratis-Day-Pass Pflicht - 2 Tage vorher ab 7 Uhr (PT) buchen", lat:50.347352, lng:-122.477233,
    note:"Drei leuchtend türkise Gletscherseen, gestaffelt am Aufstieg - eines der meistfotografierten Ziele BCs. WICHTIG: vom 11. Mai bis 25. Okt 2026 gilt rund um die Uhr Day-Pass-Pflicht. Spontan aufkreuzen geht nicht - ohne Pass weist der Ranger am Trailhead ab, es gibt keine Walk-up- oder First-come-Plätze (auch kein First-come-Parking). Der Pass ist gratis, muss aber 2 Tage im Voraus ab 7 Uhr (Pazifikzeit) online bei BC Parks gebucht werden (nicht telefonisch, nicht über die Camping-Seite). Beliebte Tage sind um 7 Uhr rasch weg. Alternative ohne eigenes Buchen: der Park-Bus-Shuttle ab Downtown Vancouver (ca. 8.30 Uhr, rund 60-94 CAD retour) - Pass inklusive. Zusätzlich gesperrt 20.-27. Juni und 8.-30. Sept 2026 (First-Nations-Praktiken). Übernachtungsgäste mit Camping-Reservation brauchen keinen Extra-Pass.",
    meta:"Duffey Lake Rd · Gratis-Pass Pflicht, 2 Tage vorab 7 Uhr online"},
-  {cat:"must", name:"Sea to Sky Gondola", lat:49.675100, lng:-123.157044,
+  {cat:"must", name:"Sea to Sky Gondola", link:"https://www.seatoskygondola.com/", cost:"Gondel Erw. 73,95 CAD online (Schalter 81,95); Parken gratis", essen:"Summit Lodge (Restaurant/Cafe/Bar) auf dem Gipfel", lat:49.675100, lng:-123.157044,
    note:"Gondel bei Squamish auf 885 m mit Hängebrücke und Aussichtsplattformen über den Howe Sound. Oben leichte Rundwege.",
    meta:"bei Squamish · Gondel kostenpflichtig"},
-  {cat:"wandern", name:"Stawamus Chief", lat:49.689491, lng:-123.133808,
+  {cat:"wandern", name:"Stawamus Chief", link:"https://bcparks.ca/stawamus-chief-park/", cost:"Gratis; Parken gratis (Lot klein, oft voll)", essen:"Keine Verpflegung; Squamish nahebei", dauer:"3-4 Std. retour (First Peak)", lat:49.689491, lng:-123.133808,
    note:"Gewaltiger Granitmonolith über Squamish, einer der bekanntesten Aufstiege BCs: steil über Ketten und Leitern zu drei Gipfeln mit Blick über den Fjord.",
    meta:"Squamish · 6 km retour · +600 hm, steil"},
   {cat:"wandern", name:"Garibaldi Lake", warn:"Day-Pass in der Hauptsaison nötig (ab Rubble Creek)", lat:49.9542, lng:-123.1195,
@@ -436,7 +449,7 @@ const PLACES = [
   {cat:"wandern", name:"Nairn Falls", lat:50.292534, lng:-122.818121,
    note:"Tosender Wasserfall des Green River bei Pemberton, kurzer Waldweg dem Fluss entlang. Ruhiger Stopp vor der Duffey Lake Road.",
    meta:"bei Pemberton · 3 km retour"},
-  {cat:"aussicht", name:"Peak 2 Peak Gondola", lat:50.112659, lng:-122.954431,
+  {cat:"aussicht", name:"Peak 2 Peak Gondola", link:"https://www.whistlerblackcomb.com/", cost:"Summer Alpine Experience (inkl. Peak 2 Peak) Erw. ab ~99 CAD", essen:"Roundhouse Lodge u.a. auf dem Berg; Whistler Village", lat:50.112659, lng:-122.954431,
    note:"Rekordgondel zwischen Whistler und Blackcomb Mountain, teils mit Glasboden, 436 m über dem Tal. Oben Gletscherblick und Wanderwege.",
    meta:"Whistler · Gondel kostenpflichtig"},
   {cat:"aussicht", name:"Duffey Lake", lat:50.405165, lng:-122.312210,
@@ -447,7 +460,115 @@ const PLACES = [
    meta:"Whistler · Verleih am Rainbow Park"},
   {cat:"rnd", name:"Whistler Train Wreck", lat:50.084332, lng:-123.050561,
    note:"Sieben rostige, kunterbunt besprayte Güterwaggons eines alten Zugunglücks, versteckt im Wald hinter einer Hängebrücke über den Cheakamus. Kurzer, leichter Weg.",
-   meta:"Cheakamus Crossing · ca. 2 km retour"}
+   meta:"Cheakamus Crossing · ca. 2 km retour"},
+
+  // ---------- Übernachtung (spontan, Schlafen im Auto) ----------
+  {cat:"schlafen", name:"Silver Lake Provincial Park", lat:49.2795, lng:-121.418,
+   note:"Naechste legale Uebernachtung ab Hope, 25 Plaetze mit first-come-Anteil, Pit-Toiletten, Seewasser, Schotterzufahrt.",
+   cost:"~18 CAD",
+   link:"https://bcparks.ca/silver-lake-park/",
+   meta:"Hope · Provincial Park"},
+  {cat:"schlafen", name:"Britton Creek Rest Area", lat:49.6165, lng:-120.941,
+   note:"Saubere WC, teils Foodtruck. Schlafen im Auto wird geduldet, ist an BC-Rastplaetzen aber offiziell nicht erlaubt (nur Ermuedungspause bis 8 h).",
+   warn:"Overnight offiziell verboten, nur geduldet",
+   cost:"gratis",
+   meta:"Coquihalla Hwy 5 · Rastplatz"},
+  {cat:"schlafen", name:"Walmart Supercentre Merritt", lat:50.1076, lng:-120.7998,
+   note:"Eine Nacht geduldet, hell und ruhig nahe Highway; Septic-Dump beim Canadian Tire; kurz im Laden fragen.",
+   cost:"gratis",
+   link:"https://ioverlander.com/places/67943-walmart-merritt",
+   meta:"Merritt · Walmart-Parkplatz"},
+  {cat:"schlafen", name:"Kentucky-Alleyne Provincial Park", lat:49.908, lng:-120.567,
+   note:"First-come (nicht reservierbar), 58 Plaetze an zwei Seen, Pit-Toiletten, kein Trinkwasser, oft auch spontan Platz.",
+   cost:"~20 CAD",
+   link:"https://bcparks.ca/kentucky-alleyne-park/",
+   meta:"sued Merritt · Provincial Park"},
+  {cat:"schlafen", name:"Stump Lake Recreation Site", lat:50.3831, lng:-120.3344,
+   note:"Gratis-Rec-Site am See, 4 Plaetze first-come, schmale Schotterzufahrt (nicht fuer grosse Anhaenger), max. 14 Tage.",
+   cost:"gratis",
+   link:"https://www.sitesandtrailsbc.ca/",
+   meta:"sued Kamloops · BC Rec Site"},
+  {cat:"schlafen", name:"Skimikin Lake Recreation Site", lat:50.7186, lng:-119.4192,
+   note:"36 Plaetze first-come ohne Reservation, Toiletten + Tische, Selbstzahler-Box, max. 14 Tage.",
+   cost:"~12 CAD",
+   link:"https://www.sitesandtrailsbc.ca/",
+   meta:"Salmon Arm / Shuswap · BC Rec Site"},
+  {cat:"schlafen", name:"Carnes Creek Recreation Site", lat:51.2997, lng:-118.281,
+   note:"Am Lake Revelstoke, first-come ohne Reservation, Tisch + Feuerstelle je Platz, Pit-Toiletten, kein Handyempfang.",
+   cost:"~18 CAD",
+   link:"https://www.campingrvbc.com/sites/bc/carnes-creek-revelstoke/",
+   meta:"noerdl. Revelstoke · BC Rec Site"},
+  {cat:"schlafen", name:"Cat Lake Recreation Site", lat:49.7962, lng:-123.1436,
+   note:"50 Walk-in-Plaetze first-come, Plumpsklo, kein Wasser, viel Baerenaktivitaet (Food-Caches), max. 14 Tage.",
+   cost:"~15 CAD",
+   link:"https://www.sitesandtrailsbc.ca/",
+   meta:"noerdl. Squamish · BC Rec Site"},
+  {cat:"schlafen", name:"Jane Lakes / Callaghan Crown Land", lat:50.073, lng:-123.05,
+   note:"Dispersed Camping auf Crown Land ausserhalb der Gemeinde legal, gratis, max. 14 Tage, keine Infrastruktur; in Whistler selbst ist Auto-Schlafen verboten.",
+   cost:"gratis",
+   meta:"suedwestl. Whistler · Crown Land"},
+  {cat:"schlafen", name:"Strawberry Point Recreation Site", lat:50.28, lng:-122.547,
+   note:"Direkt am See, first-come ohne Reservation, Gebuehr in Kassenbox, Outhouse + Baerencache, kein Trinkwasser, max. 14 Tage.",
+   cost:"~15 CAD",
+   link:"https://www.sitesandtrailsbc.ca/",
+   meta:"Lillooet Lake / Pemberton · BC Rec Site"},
+  {cat:"schlafen", name:"Seton Dam Campground", lat:50.6684, lng:-121.9687,
+   note:"Kostenloser BC-Hydro-Platz, first-come, viele flache Stellplaetze fuer grosse Fahrzeuge, Trockentoiletten + Wasser, max. 14 Tage.",
+   cost:"gratis",
+   link:"https://www.bchydro.com/",
+   meta:"Lillooet · BC Hydro (gratis)"},
+  {cat:"schlafen", name:"Marble Canyon Provincial Park", lat:50.814, lng:-121.439,
+   note:"Nur first-come (nicht reservierbar), 34 Plaetze an tuerkisfarbenen Seen, Pumpwasser + Pit-Toiletten, im Sommer frueh voll.",
+   cost:"~18 CAD",
+   link:"https://bcparks.ca/marble-canyon-park/",
+   meta:"Cache Creek · Provincial Park"},
+  {cat:"schlafen", name:"Cedar Lake Recreation Site", lat:51.2623, lng:-116.9838,
+   note:"Reiner first-come ohne Reservation, primitiv (Plumpsklo, kein Strom/Wasser), eher fuer kleine Camper, offen Mai bis Mitte Okt.",
+   cost:"~15 CAD (Nebensaison gratis)",
+   link:"https://www.sitesandtrailsbc.ca/",
+   meta:"Golden · BC Rec Site"},
+  {cat:"schlafen", name:"Golden Municipal Campground", lat:51.2971, lng:-116.9472,
+   note:"Am Kicking Horse River, meist auch spontan Restplaetze, Strom/Duschen; die sichere Stadt-Option, da Auto-Schlafen in Golden selbst nicht erlaubt.",
+   cost:"~35-55 CAD",
+   link:"https://www.goldenmunicipalcampground.com/",
+   meta:"Golden Zentrum · Stadtcamping"},
+  {cat:"schlafen", name:"Hoodoo Creek Campground (Yoho)", lat:51.225, lng:-116.563,
+   note:"First-come only, 30 Plaetze, Auto/Wohnmobil bis 50ft, offen ca. 11.6.-7.9.2026, ruhiger als Field.",
+   cost:"~22 CAD",
+   link:"https://parks.canada.ca/pn-np/bc/yoho/activ/camping/avantpays-frontcountry",
+   meta:"West-Yoho, nahe Wapta Falls · first-come"},
+  {cat:"schlafen", name:"Monarch Campground (Yoho)", lat:51.4206, lng:-116.4418,
+   note:"Reiner first-come Overflow, keine Reservation, 44 unserviced Plaetze, Wohnmobil bis 27ft; liegt an Bahn+Highway (laut), frueh da sein.",
+   cost:"~22 CAD",
+   link:"https://parks.canada.ca/pn-np/bc/yoho/activ/camping/avantpays-frontcountry",
+   meta:"Field / Yoho · first-come"},
+  {cat:"schlafen", name:"Lake Louise Overflow", lat:51.3874, lng:-116.1299,
+   note:"Die legale Auto-Schlaf-Alternative in Banff: grosser Schotterplatz, first-come, Auto/Van/Wohnmobil ok; Park-Pass + Permit noetig, Check-out 8 Uhr, im Winter zu.",
+   cost:"~11-12 CAD",
+   link:"https://parks.canada.ca/pn-np/ab/banff/activ/camping",
+   meta:"Lake Louise · legaler Auto-Schlafplatz"},
+  {cat:"schlafen", name:"Protection Mountain Campground", lat:51.3261, lng:-116.037,
+   note:"First-come, 72 Plaetze, Trinkwasser/WC, Auto+Wohnmobil, offen Juni-Sep; gute Banff-Alternative, wenn das Overflow voll ist.",
+   cost:"~22-30 CAD",
+   link:"https://parks.canada.ca/pn-np/ab/banff/activ/camping",
+   meta:"Bow Valley Pkwy, zw. Lake Louise+Banff · first-come"},
+  {cat:"schlafen", name:"Castle Mountain Campground", lat:51.2681, lng:-115.9102,
+   note:"First-come, 43 Plaetze, Wohnmobil bis 24ft, Park-Pass noetig.",
+   warn:"2026 zeitweise geschlossen - Status vorher pruefen",
+   cost:"~21,50-30 CAD",
+   link:"https://parks.canada.ca/pn-np/ab/banff/activ/camping",
+   meta:"Castle Junction, Banff NP · first-come"},
+  {cat:"schlafen", name:"Willow Rock Campground (Bow Valley PP)", lat:51.0829, lng:-115.1025,
+   note:"first-come-Loop vorhanden, Duschen/WC; Kananaskis Conservation Pass pro Auto Pflicht; spontane Option nahe Canmore.",
+   cost:"~29 CAD + 15 CAD Pass",
+   link:"https://www.albertaparks.ca/parks/kananaskis/bow-valley-pp/",
+   meta:"oestl. Canmore Richtung Calgary · Kananaskis"},
+  {cat:"schlafen", name:"Walmart Cochrane Supercentre", lat:51.1863, lng:-114.4714,
+   note:"Letzte Gratis-Notoption Richtung Calgary; keine Ausstattung, diskret bleiben. In Canmore gibt es KEINEN Walmart, Auto-Schlafen wird dort gebuesst.",
+   warn:"Nur mit OK des Managers (vorher anrufen)",
+   cost:"gratis",
+   link:"https://www.walmart.ca/en/store/1135",
+   meta:"Cochrane, ~40 km vor Calgary · Walmart"}
 ];
 
 // ---------- Karte ----------
@@ -523,6 +644,15 @@ function openSheet(p){
   w.textContent = p.warn || '';
   w.hidden = !p.warn;
   document.getElementById('sheetNote').textContent = p.note;
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const facts = document.getElementById('sheetFacts');
+  let fh = '';
+  if(p.dauer) fh += `<div class="fact"><span>🕒</span><span><b>Gehzeit:</b> ${esc(p.dauer)}</span></div>`;
+  if(p.cost)  fh += `<div class="fact"><span>💲</span><span><b>Kosten:</b> ${esc(p.cost)}</span></div>`;
+  if(p.essen) fh += `<div class="fact"><span>🍴</span><span><b>Verpflegung:</b> ${esc(p.essen)}</span></div>`;
+  if(p.link)  fh += `<div class="fact"><span>🔗</span><span><a href="${esc(p.link)}" target="_blank" rel="noopener">Offizielle Website</a></span></div>`;
+  facts.innerHTML = fh;
+  facts.hidden = !fh;
   document.getElementById('sheetMeta').textContent = p.meta || '';
   document.getElementById('sheetRoute').href =
     'https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lng;
