@@ -176,7 +176,7 @@
 <header>
   <div class="title-card">
     <h1>Vancouver → Calgary: Roadtrip durch die Rockies</h1>
-    <p>Trans-Canada · antippen für Details · Chips filtern</p>
+    <p>2 Varianten: Coquihalla &amp; Sea-to-Sky (Whistler) · antippen für Details</p>
   </div>
   <div class="chips" id="chips">
     <button class="chip" data-cat="all"><span class="dot"></span>Alle</button>
@@ -355,7 +355,54 @@ const PLACES = [
    meta:"Yoho NP · frei zugänglich"},
   {cat:"rnd", name:"Kicking Horse Pedestrian Bridge", lat:51.299674, lng:-116.968339,
    note:"Längste freitragende Holzrahmen-Brücke Kanadas, über den Kicking Horse River in Golden. Netter Abstecher in die Innenstadt.",
-   meta:"Golden, BC · frei"}
+   meta:"Golden, BC · frei"},
+
+  // ---------- Whistler-Variante (Sea-to-Sky / Duffey Lake Rd) ----------
+  {cat:"stopp", name:"Squamish", lat:49.698074, lng:-123.155861,
+   note:"Outdoor-Hauptstadt zwischen Meer und Bergen am Sea-to-Sky Highway: Klettern, Mountainbiken, Kiten. Erster grosser Halt auf der Whistler-Variante.",
+   meta:"BC · ca. 1 Std. ab Vancouver"},
+  {cat:"stopp", name:"Whistler Village", lat:50.114659, lng:-122.955979,
+   note:"Autofreies Bergresort, Austragungsort Olympia 2010: Fussgängerdorf mit Restaurants, das grösste Skigebiet Nordamerikas, im Sommer Bikepark und Gondeln.",
+   meta:"BC · ca. 2 Std. ab Vancouver"},
+  {cat:"stopp", name:"Pemberton", lat:50.320380, lng:-122.808078,
+   note:"Ruhiges Bauern- und Kartoffeldorf hinter Whistler, letzte Tankstelle vor der einsamen Duffey Lake Road. Blick auf den Mount Currie.",
+   meta:"BC · vor der Duffey Lake Rd tanken"},
+  {cat:"stopp", name:"Lillooet", lat:50.693938, lng:-121.933691,
+   note:"Heisses, trockenes Städtchen am Fraser River, historischer Goldrausch-Ort (Mile 0). Landschaftlicher Bruch: von Gletschern zur Halbwüste. Hier zurück Richtung Trans-Canada.",
+   meta:"BC · Übergang zur Hwy 99/97"},
+  {cat:"must", name:"Shannon Falls", lat:49.666496, lng:-123.162577,
+   note:"Mit 335 m der dritthöchste Wasserfall BCs, wenige Schritte vom Highway. Direkt neben der Talstation der Sea to Sky Gondola.",
+   meta:"bei Squamish · kurzer Weg, frei"},
+  {cat:"must", name:"Joffre Lakes", lat:50.347352, lng:-122.477233,
+   note:"Drei leuchtend türkise Gletscherseen, gestaffelt am Weg hinauf - eines der meistfotografierten Ziele BCs. Day-Pass nötig (11. Mai bis 25. Okt 2026), zeitweise Sperrungen für First-Nations-Praktiken.",
+   meta:"Duffey Lake Rd · Day-Pass vorab buchen"},
+  {cat:"must", name:"Sea to Sky Gondola", lat:49.675100, lng:-123.157044,
+   note:"Gondel bei Squamish auf 885 m mit Hängebrücke und Aussichtsplattformen über den Howe Sound. Oben leichte Rundwege.",
+   meta:"bei Squamish · Gondel kostenpflichtig"},
+  {cat:"wandern", name:"Stawamus Chief", lat:49.689491, lng:-123.133808,
+   note:"Gewaltiger Granitmonolith über Squamish, einer der bekanntesten Aufstiege BCs: steil über Ketten und Leitern zu drei Gipfeln mit Blick über den Fjord.",
+   meta:"Squamish · 6 km retour · +600 hm, steil"},
+  {cat:"wandern", name:"Garibaldi Lake", lat:49.9542, lng:-123.1195,
+   note:"Anstrengende, aber grandiose Wanderung zu einem gletscherblauen Bergsee im Garibaldi Park. Day-Pass in der Hauptsaison nötig, ab Rubble-Creek-Parkplatz.",
+   meta:"18 km retour · +820 hm · Day-Pass"},
+  {cat:"wandern", name:"Brandywine Falls", lat:50.046881, lng:-123.117805,
+   note:"70 m hoher Wasserfall, in wenigen Minuten vom Parkplatz zur Aussichtsplattform. Schneller Bein-vertreten-Stopp zwischen Squamish und Whistler.",
+   meta:"Hwy 99 · 10 Min. zur Plattform"},
+  {cat:"wandern", name:"Nairn Falls", lat:50.292534, lng:-122.818121,
+   note:"Tosender Wasserfall des Green River bei Pemberton, kurzer Waldweg dem Fluss entlang. Ruhiger Stopp vor der Duffey Lake Road.",
+   meta:"bei Pemberton · 3 km retour"},
+  {cat:"aussicht", name:"Peak 2 Peak Gondola", lat:50.112659, lng:-122.954431,
+   note:"Rekordgondel zwischen Whistler und Blackcomb Mountain, teils mit Glasboden, 436 m über dem Tal. Oben Gletscherblick und Wanderwege.",
+   meta:"Whistler · Gondel kostenpflichtig"},
+  {cat:"aussicht", name:"Duffey Lake", lat:50.405165, lng:-122.312210,
+   note:"Türkiser See an der einsamen, kurvigen Duffey Lake Road (Hwy 99). Mehrere Aussichtsbuchten, spektakulär und wenig befahren. Im Winter anspruchsvoll.",
+   meta:"Duffey Lake Rd · Aussichtsbuchten"},
+  {cat:"paddeln", name:"Alta Lake (Whistler)", lat:50.113401, lng:-122.980821,
+   note:"Warmer Badesee in Whistler mit Stränden (Rainbow Park), gut für Kanu, SUP und Schwimmen. Blick auf die beiden Hausberge.",
+   meta:"Whistler · Verleih am Rainbow Park"},
+  {cat:"rnd", name:"Whistler Train Wreck", lat:50.084332, lng:-123.050561,
+   note:"Sieben rostige, kunterbunt besprayte Güterwaggons eines alten Zugunglücks, versteckt im Wald hinter einer Hängebrücke über den Cheakamus. Kurzer, leichter Weg.",
+   meta:"Cheakamus Crossing · ca. 2 km retour"}
 ];
 
 // ---------- Karte ----------
@@ -380,16 +427,33 @@ const ROUTE = [
   [51.0867,-115.3481], // Canmore
   [51.0447,-114.0719]  // Calgary
 ];
+const ROUTE_COLOR = getComputedStyle(document.documentElement).getPropertyValue('--route').trim() || '#55606b';
 const routeLine = L.polyline(ROUTE, {
-  color:getComputedStyle(document.documentElement).getPropertyValue('--route').trim() || '#55606b',
-  weight:4, opacity:.85, dashArray:'2 9', lineCap:'round'
-}).addTo(map);
+  color:ROUTE_COLOR, weight:4, opacity:.85, dashArray:'2 9', lineCap:'round'
+}).addTo(map).bindTooltip('Standard: über Hope & Coquihalla', {sticky:true});
+
+// Variante über Whistler (Sea-to-Sky Hwy 99 + Duffey Lake Rd), trifft bei Kamloops wieder auf die Hauptroute
+const ROUTE_WHISTLER = [
+  [49.2827,-123.1207], // Vancouver
+  [49.6981,-123.1559], // Squamish
+  [50.1147,-122.9560], // Whistler
+  [50.3204,-122.8081], // Pemberton
+  [50.3474,-122.4772], // Joffre Lakes
+  [50.4052,-122.3122], // Duffey Lake
+  [50.6939,-121.9337], // Lillooet
+  [50.8132,-121.3242], // Cache Creek
+  [50.6758,-120.3394]  // Kamloops (zurück auf die Hauptroute)
+];
+const routeLineWhistler = L.polyline(ROUTE_WHISTLER, {
+  color:ROUTE_COLOR, weight:4, opacity:.85, dashArray:'11 8', lineCap:'round'
+}).addTo(map).bindTooltip('Variante: Sea-to-Sky über Whistler', {sticky:true});
+
 // Start-/Zielpunkte markieren
 [['Vancouver',ROUTE[0]],['Calgary',ROUTE[ROUTE.length-1]]].forEach(([n,ll]) => {
   L.marker(ll, {icon:L.divIcon({className:'', html:`<div class="pin" style="background:var(--lake)">${n==='Vancouver'?'🏁':'🎯'}</div>`, iconSize:[38,38], iconAnchor:[19,36]})})
     .addTo(map).bindTooltip(n, {direction:'top', offset:[0,-34]});
 });
-map.fitBounds(routeLine.getBounds(), {padding:[50,50]});
+map.fitBounds(L.featureGroup([routeLine, routeLineWhistler]).getBounds(), {padding:[50,50]});
 
 const markers = [];
 PLACES.forEach(p => {
