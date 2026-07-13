@@ -229,6 +229,21 @@
   }
   .leaflet-control-scale-line:not(:first-child){border-top:2px solid var(--ink);border-bottom:none;margin-top:-2px}
 
+  /* Legende zu den roten Verbotszonen */
+  .zone-legend{
+    position:fixed;left:14px;bottom:calc(var(--sab) + 66px);z-index:16;
+    display:flex;align-items:center;gap:7px;
+    background:rgba(255,255,255,.94);
+    border-radius:10px;padding:6px 10px;
+    font-size:.72rem;font-weight:700;color:var(--ink);
+    box-shadow:0 2px 8px rgba(8,60,73,.25);
+    pointer-events:none;max-width:70vw;
+  }
+  .zone-legend .sw{
+    flex:0 0 auto;width:15px;height:15px;border-radius:4px;
+    background:rgba(224,50,47,.35);border:2px solid #b3161f;
+  }
+
   /* ---------- Desktop-Anpassung (mobile first, dann hoch) ---------- */
   @media (min-width:760px){
     header{left:20px;right:auto;width:380px}
@@ -266,6 +281,8 @@
 </header>
 
 <button class="locate-btn" id="locateBtn" aria-label="Meinen Standort anzeigen" title="Mein Standort">➤</button>
+
+<div class="zone-legend"><span class="sw"></span>Rot = Schlafen im Auto verboten</div>
 
 <div class="sheet" id="sheet">
   <div class="grabber"></div>
@@ -810,6 +827,16 @@ map.fitBounds(routeLine.getBounds(), {padding:[50,50]});
 
 // Gut sichtbare Massstabsleiste, immer unten angezeigt
 L.control.scale({position:'bottomleft', metric:true, imperial:true, maxWidth:160}).addTo(map);
+
+// Gemeindegebiete mit Bylaw-Verbot fürs Schlafen im Auto (rot eingefärbt)
+const NO_SLEEP_ZONES = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"name":"Whistler","reason":"Schlafen im Fahrzeug ueberall verboten, 100 CAD/Nacht, aktive Kontrollen (Baeren)"},"geometry":{"type":"Polygon","coordinates":[[[-123.153214,50.0404421],[-123.1146248,50.0404519],[-123.1145634,50.0332045],[-123.0951878,50.0331764],[-123.0583654,50.0267102],[-122.9808447,50.026724],[-122.9808406,50.0398639],[-122.8609843,50.0399431],[-122.8609243,50.1368852],[-122.9141039,50.1369683],[-122.9121273,50.1667928],[-122.9005051,50.1614101],[-122.897144,50.1655088],[-122.8973465,50.1704112],[-122.9088472,50.1704371],[-122.9088472,50.1740034],[-122.9286696,50.1758318],[-122.9286088,50.1722138],[-122.9342076,50.1722406],[-122.9341816,50.1682986],[-122.9524114,50.1681822],[-122.9524374,50.1646557],[-123.0066388,50.1646256],[-123.0999003,50.1021675],[-123.1520228,50.1021391],[-123.153214,50.0404421]]]}},{"type":"Feature","properties":{"name":"Banff","reason":"Uebernachten im Auto in der Townsite verboten"},"geometry":{"type":"Polygon","coordinates":[[[-115.5910001,51.1672049],[-115.588232,51.1634238],[-115.5730195,51.1673035],[-115.5569816,51.1618012],[-115.5603183,51.1658919],[-115.5570943,51.1716941],[-115.5540419,51.1715899],[-115.5617523,51.1791244],[-115.5572301,51.1822972],[-115.5506023,51.1813234],[-115.5452022,51.1879877],[-115.5476068,51.1918647],[-115.5554409,51.1858591],[-115.5579332,51.1889118],[-115.5529306,51.1923649],[-115.5553515,51.1934089],[-115.5634625,51.1915532],[-115.5625158,51.187248],[-115.5813515,51.1839881],[-115.5772636,51.1779803],[-115.5834246,51.1755559],[-115.5846486,51.168658],[-115.5910001,51.1672049]]]}},{"type":"Feature","properties":{"name":"Canmore","reason":"Uebernachten im Auto verboten, Busse (kein Walmart)"},"geometry":{"type":"Polygon","coordinates":[[[-115.4324108,51.1328771],[-115.3838571,51.1033236],[-115.3747818,51.0923655],[-115.3785052,51.0825578],[-115.4097583,51.0824027],[-115.4099353,51.0673954],[-115.3763062,51.0672148],[-115.3763706,51.0537016],[-115.3515226,51.0534858],[-115.3521234,51.0390512],[-115.3270629,51.0378854],[-115.3260523,51.0195776],[-115.3104812,51.0195904],[-115.3104919,51.0087907],[-115.2708168,51.0086076],[-115.270641,51.00141],[-115.2450175,51.0015126],[-115.2451048,51.0087935],[-115.2331977,51.0087767],[-115.2341954,51.0231887],[-115.2238958,51.0233059],[-115.2240798,51.0453615],[-115.2384284,51.0391893],[-115.2715484,51.0378217],[-115.3196995,51.0576045],[-115.333445,51.0750423],[-115.3037884,51.0727373],[-115.3034419,51.0969727],[-115.3211445,51.0972153],[-115.3211874,51.1045049],[-115.3267878,51.1045454],[-115.3268737,51.1113623],[-115.3387827,51.1116318],[-115.3388041,51.1195387],[-115.352022,51.1197946],[-115.352065,51.1264074],[-115.3617209,51.1265151],[-115.3778356,51.1161444],[-115.3800931,51.1189315],[-115.3812224,51.1189301],[-115.3795479,51.1147446],[-115.381884,51.1131313],[-115.381344,51.1179224],[-115.3872341,51.1228048],[-115.401364,51.1216398],[-115.4006344,51.1250943],[-115.4120284,51.12735],[-115.4186909,51.1335106],[-115.4324108,51.1328771]]]}}]};
+L.geoJSON(NO_SLEEP_ZONES, {
+  style:{color:'#b3161f', weight:2, fillColor:'#e0322f', fillOpacity:.22, dashArray:'5 4'},
+  onEachFeature:(f,l)=>{
+    l.bindTooltip('🚫 '+f.properties.name+': Schlafen im Auto verboten', {sticky:true});
+    l.bindPopup('<b>🚫 '+f.properties.name+'</b><br>'+f.properties.reason);
+  }
+}).addTo(map);
 
 const markers = [];
 PLACES.forEach(p => {
