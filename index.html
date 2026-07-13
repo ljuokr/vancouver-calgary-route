@@ -156,8 +156,28 @@
   .locate-btn:active{transform:scale(.92)}
   .locate-btn.active{background:var(--lake);color:#fff}
 
-  /* Leaflet Bedienelemente unter die Chips schieben */
-  .leaflet-top{top:calc(var(--sat) + 118px)}
+  /* Info-Vermerk (Joffre Lakes Day-Pass) */
+  .tip{
+    pointer-events:auto;
+    display:flex;align-items:flex-start;gap:8px;
+    margin-top:8px;
+    background:#fff;border-left:4px solid var(--rnd);
+    border-radius:12px;padding:8px 10px;
+    box-shadow:0 2px 10px rgba(8,60,73,.14);
+    font-size:.74rem;line-height:1.35;color:var(--ink);
+    cursor:pointer;
+  }
+  .tip.hide{display:none}
+  .tip-ic{font-size:1rem;flex:0 0 auto;line-height:1.2}
+  .tip-tx{flex:1 1 auto}
+  .tip-x{
+    flex:0 0 auto;border:none;background:transparent;
+    font-size:1.15rem;line-height:1;color:#79828a;cursor:pointer;padding:0 2px;
+  }
+
+  /* Leaflet Bedienelemente unter Chips + Vermerk schieben */
+  .leaflet-top{top:calc(var(--sat) + 176px)}
+  body.tip-off .leaflet-top{top:calc(var(--sat) + 118px)}
   .leaflet-control-attribution{font-size:9px}
 
   /* ---------- Desktop-Anpassung (mobile first, dann hoch) ---------- */
@@ -187,6 +207,11 @@
     <button class="chip" data-cat="therme"><span class="dot"></span>♨️ Thermen</button>
     <button class="chip" data-cat="stopp"><span class="dot"></span>🏙️ Stopps</button>
     <button class="chip" data-cat="rnd"><span class="dot"></span>🎲 Kurioses</button>
+  </div>
+  <div class="tip" id="joffreTip" role="button" tabindex="0" aria-label="Hinweis Joffre Lakes Day-Pass, antippen für Details">
+    <span class="tip-ic">⚠️</span>
+    <span class="tip-tx"><b>Joffre Lakes:</b> Day-Pass Pflicht (Mai–Okt), spontan nicht möglich - 2 Tage vorher ab 7 Uhr buchen. Antippen für Details.</span>
+    <button class="tip-x" id="joffreTipX" aria-label="Hinweis schliessen">×</button>
   </div>
 </header>
 
@@ -374,8 +399,8 @@ const PLACES = [
    note:"Mit 335 m der dritthöchste Wasserfall BCs, wenige Schritte vom Highway. Direkt neben der Talstation der Sea to Sky Gondola.",
    meta:"bei Squamish · kurzer Weg, frei"},
   {cat:"must", name:"Joffre Lakes", lat:50.347352, lng:-122.477233,
-   note:"Drei leuchtend türkise Gletscherseen, gestaffelt am Weg hinauf - eines der meistfotografierten Ziele BCs. Day-Pass nötig (11. Mai bis 25. Okt 2026), zeitweise Sperrungen für First-Nations-Praktiken.",
-   meta:"Duffey Lake Rd · Day-Pass vorab buchen"},
+   note:"Drei leuchtend türkise Gletscherseen, gestaffelt am Aufstieg - eines der meistfotografierten Ziele BCs. WICHTIG: vom 11. Mai bis 25. Okt 2026 gilt rund um die Uhr Day-Pass-Pflicht. Spontan aufkreuzen geht nicht - ohne Pass weist der Ranger am Trailhead ab, es gibt keine Walk-up- oder First-come-Plätze (auch kein First-come-Parking). Der Pass ist gratis, muss aber 2 Tage im Voraus ab 7 Uhr (Pazifikzeit) online bei BC Parks gebucht werden (nicht telefonisch, nicht über die Camping-Seite). Beliebte Tage sind um 7 Uhr rasch weg. Alternative ohne eigenes Buchen: der Park-Bus-Shuttle ab Downtown Vancouver (ca. 8.30 Uhr, rund 60-94 CAD retour) - Pass inklusive. Zusätzlich gesperrt 20.-27. Juni und 8.-30. Sept 2026 (First-Nations-Praktiken). Übernachtungsgäste mit Camping-Reservation brauchen keinen Extra-Pass.",
+   meta:"Duffey Lake Rd · Gratis-Pass Pflicht, 2 Tage vorab 7 Uhr online"},
   {cat:"must", name:"Sea to Sky Gondola", lat:49.675100, lng:-123.157044,
    note:"Gondel bei Squamish auf 885 m mit Hängebrücke und Aussichtsplattformen über den Howe Sound. Oben leichte Rundwege.",
    meta:"bei Squamish · Gondel kostenpflichtig"},
@@ -531,6 +556,21 @@ document.getElementById('chips').addEventListener('click', e => {
   sheet.classList.remove('open');
 });
 applyFilter();
+
+// ---------- Info-Vermerk Joffre Lakes ----------
+const joffreTip = document.getElementById('joffreTip');
+if(joffreTip){
+  joffreTip.addEventListener('click', e => {
+    if(e.target.id === 'joffreTipX') return;
+    const j = PLACES.find(p => p.name === 'Joffre Lakes');
+    if(j){ openSheet(j); map.setView([j.lat, j.lng], 11, {animate:true}); }
+  });
+  document.getElementById('joffreTipX').addEventListener('click', e => {
+    e.stopPropagation();
+    joffreTip.classList.add('hide');
+    document.body.classList.add('tip-off');
+  });
+}
 
 // ---------- Eigener Standort ----------
 const locateBtn = document.getElementById('locateBtn');
