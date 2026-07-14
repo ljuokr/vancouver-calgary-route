@@ -110,6 +110,15 @@
     border:2px solid #fff;
     box-shadow:0 1px 4px rgba(0,0,0,.4);
   }
+  /* Badge: Schotter-/FSR-Zufahrt, nicht mit 2WD-Mietwagen */
+  .pin-nodrive{
+    position:absolute;bottom:-5px;right:-7px;
+    width:19px;height:19px;border-radius:50%;
+    background:#6b5324;
+    font-size:11px;line-height:19px;text-align:center;
+    border:2px solid #fff;
+    box-shadow:0 1px 4px rgba(0,0,0,.4);
+  }
   .pin.must{background:var(--must)}
   .pin.wandern{background:var(--wandern)}
   .pin.paddeln{background:var(--paddeln)}
@@ -161,6 +170,7 @@
   .sheet .fact{display:flex;gap:8px;font-size:.85rem;line-height:1.4;color:#454c53}
   .sheet .fact>span:first-child{flex:0 0 auto}
   .sheet .fact a{color:var(--lake);font-weight:700;word-break:break-word}
+  .sheet .fact-nodrive{color:#b3161f;font-weight:600}
   .sheet .meta{font-size:.8rem;color:#79828a;margin-top:10px}
   .sheet a.route{
     display:inline-block;margin-top:14px;
@@ -316,7 +326,7 @@ const PLACES = [
   {cat:"must", name:"Moraine Lake", link:"https://parks.canada.ca/pn-np/ab/banff/visit/parkbus/louise", cost:"Autos ganzjaehrig gesperrt; Parks-Canada-Shuttle retour 12,75 CAD + 3,50 CAD Gebuehr", essen:"Keine Verpflegung vor Ort; Essen im Dorf Lake Louise", warn:"Kein Privatauto - Zufahrt nur per Shuttle/Bus", lat:51.3217, lng:-116.1860,
    note:"Das Motiv vom alten 20-Dollar-Schein: tiefblauer See im Valley of the Ten Peaks. Privatautos sind gesperrt, Zufahrt nur mit Shuttle oder Rovers. Zum Sonnenaufgang am schönsten.",
    meta:"Banff NP · nur per Shuttle erreichbar"},
-  {cat:"must", name:"Peyto Lake", link:"https://www.banfflakelouise.com/things-to-do/peyto-lake", cost:"Gratis; Parken gratis; Nationalpark-Pass (Sommer 2026 gratis)", essen:"Keine Verpflegung; naechstes Essen Bow Lake / Lake Louise", lat:51.7169, lng:-116.5265,
+  {cat:"must", name:"Peyto Lake", link:"https://parks.canada.ca/pn-np/ab/banff/visit/les10-top10/glaciers-icefields", cost:"Gratis; Parken gratis; Nationalpark-Pass (Sommer 2026 gratis)", essen:"Keine Verpflegung; naechstes Essen Bow Lake / Lake Louise", lat:51.7169, lng:-116.5265,
    note:"Fuchskopfförmiger Gletschersee in leuchtendem Türkis, kurzer Weg zum Aussichtsdeck. Liegt am Icefields Parkway, ca. 40 Min. nördlich von Lake Louise (Abstecher).",
    meta:"Icefields Pkwy · Abstecher ab Lake Louise"},
   {cat:"must", name:"Takakkaw Falls", link:"https://parks.canada.ca/pn-np/bc/yoho/activ/chutes-falls", cost:"Gratis; Parken gratis; Nationalpark-Pass (Zufahrt Ende Juni-Okt.)", essen:"Keine Verpflegung; naechstes Essen in Field", warn:"Zufahrtsstrasse nur ca. Ende Juni bis Oktober offen", lat:51.4996, lng:-116.4757,
@@ -336,7 +346,7 @@ const PLACES = [
   {cat:"wandern", name:"Lake Agnes Tea House", link:"https://www.lakeagnesteahouse.com/", cost:"Gratis (Wanderung); Teehaus nur Bargeld; Parkplatz Lake Louise oft voll", essen:"Teehaus am See (Tee, Suppen, Sandwiches; nur Bargeld)", dauer:"2-3 Std. retour", lat:51.4287, lng:-116.2308,
    note:"Beliebteste Wanderung ab Lake Louise: gut 3,5 km bergauf zu einem See mit historischem Teehaus (seit 1905, nur Bargeld). Weiter zum Big Beehive für den Rundblick.",
    meta:"ca. 7 km retour · +400 hm"},
-  {cat:"wandern", name:"Plain of Six Glaciers", link:"https://www.plainofsixglaciers.com/", cost:"Gratis (Wanderung); Teehaus nur Bargeld", essen:"Teehaus (Tee, Suppen, Gebaeck; nur Bargeld) kurz vor dem Ziel", dauer:"4-6 Std. retour", lat:51.4030, lng:-116.2670,
+  {cat:"wandern", name:"Plain of Six Glaciers", link:"https://parks.canada.ca/pn-np/ab/banff/activ/randonnee-hiking", cost:"Gratis (Wanderung); Teehaus nur Bargeld", essen:"Teehaus (Tee, Suppen, Gebaeck; nur Bargeld) kurz vor dem Ziel", dauer:"4-6 Std. retour", lat:51.4030, lng:-116.2670,
    note:"Wanderung am Ufer von Lake Louise entlang bis unter den Victoria-Gletscher, zweites Teehaus am Weg. Lässt sich mit Lake Agnes zur grossen Runde verbinden.",
    meta:"ca. 14 km retour · +365 hm"},
   {cat:"wandern", name:"Johnston Canyon", link:"https://parks.canada.ca/pn-np/ab/banff/activ/randonnee-hiking/johnston", cost:"Gratis; Parken gratis; Nationalpark-Pass (Sommer 2026 gratis)", essen:"Johnston Canyon Lodge (Bistro/Cafe) am Trailhead", dauer:"1-2 Std. (Lower + Upper Falls)", lat:51.2453, lng:-115.8407,
@@ -497,26 +507,26 @@ const PLACES = [
    meta:"Cheakamus Crossing · ca. 2 km retour"},
 
   // ---------- Übernachtung (spontan, Schlafen im Auto) ----------
-  {cat:"schlafen", name:"Skimikin Lake Recreation Site", lat:50.7186, lng:-119.4192,
+  {cat:"schlafen", name:"Skimikin Lake Recreation Site", unpaved:true, lat:50.7186, lng:-119.4192,
    note:"36 Plaetze first-come ohne Reservation, Toiletten + Tische, Selbstzahler-Box, max. 14 Tage.",
    cost:"~12 CAD",
    link:"https://www.sitesandtrailsbc.ca/",
    meta:"Salmon Arm / Shuswap · BC Rec Site"},
-  {cat:"schlafen", name:"Carnes Creek Recreation Site", lat:51.2997, lng:-118.281,
+  {cat:"schlafen", name:"Carnes Creek Recreation Site", unpaved:true, lat:51.2997, lng:-118.281,
    note:"Am Lake Revelstoke, first-come ohne Reservation, Tisch + Feuerstelle je Platz, Pit-Toiletten, kein Handyempfang.",
    cost:"~18 CAD",
    link:"https://www.campingrvbc.com/sites/bc/carnes-creek-revelstoke/",
    meta:"noerdl. Revelstoke · BC Rec Site"},
-  {cat:"schlafen", name:"Cat Lake Recreation Site", lat:49.7962, lng:-123.1436,
+  {cat:"schlafen", name:"Cat Lake Recreation Site", unpaved:true, lat:49.7962, lng:-123.1436,
    note:"50 Walk-in-Plaetze first-come, Plumpsklo, kein Wasser, viel Baerenaktivitaet (Food-Caches), max. 14 Tage.",
    cost:"~15 CAD",
    link:"https://www.sitesandtrailsbc.ca/",
    meta:"noerdl. Squamish · BC Rec Site"},
-  {cat:"schlafen", name:"Jane Lakes / Callaghan Crown Land", lat:50.073, lng:-123.05,
+  {cat:"schlafen", name:"Jane Lakes / Callaghan Crown Land", unpaved:true, lat:50.073, lng:-123.05,
    note:"Dispersed Camping auf Crown Land ausserhalb der Gemeinde legal, gratis, max. 14 Tage, keine Infrastruktur; in Whistler selbst ist Auto-Schlafen verboten.",
    cost:"gratis",
    meta:"suedwestl. Whistler · Crown Land"},
-  {cat:"schlafen", name:"Strawberry Point Recreation Site", lat:50.28, lng:-122.547,
+  {cat:"schlafen", name:"Strawberry Point Recreation Site", unpaved:true, lat:50.28, lng:-122.547,
    note:"Direkt am See, first-come ohne Reservation, Gebuehr in Kassenbox, Outhouse + Baerencache, kein Trinkwasser, max. 14 Tage.",
    cost:"~15 CAD",
    link:"https://www.sitesandtrailsbc.ca/",
@@ -531,7 +541,7 @@ const PLACES = [
    cost:"~18 CAD",
    link:"https://bcparks.ca/marble-canyon-park/",
    meta:"Cache Creek · Provincial Park"},
-  {cat:"schlafen", name:"Cedar Lake Recreation Site", lat:51.2623, lng:-116.9838,
+  {cat:"schlafen", name:"Cedar Lake Recreation Site", unpaved:true, lat:51.2623, lng:-116.9838,
    note:"Reiner first-come ohne Reservation, primitiv (Plumpsklo, kein Strom/Wasser), eher fuer kleine Camper, offen Mai bis Mitte Okt.",
    cost:"~15 CAD (Nebensaison gratis)",
    link:"https://www.sitesandtrailsbc.ca/",
@@ -731,53 +741,53 @@ const PLACES = [
    meta:"Lillooet · Stadtcamping"},
 
   // ---------- Crown Land / Dispersed / PLUZ (gratis bzw. Pass, kein Check-in) ----------
-  {cat:"schlafen", name:"Mamquam River FSR (Crown Land)", lat:49.7161, lng:-123.0472,
+  {cat:"schlafen", name:"Mamquam River FSR (Crown Land)", unpaved:true, lat:49.7161, lng:-123.0472,
    note:"Gut befahrbare Schotter-FSR ab Squamish (normaler SUV reicht); Plätze am Fluss, keine Ausstattung. Gesperrte Zone bei Powerhouse Springs meiden (100 CAD Busse). Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    cost:"gratis (BC)",
    spaet:"Kein Check-in, jederzeit - aber Schotterzufahrt, besser bei Tageslicht ankommen.",
    link:"https://park4night.com/en/place/675394",
    meta:"Squamish · Crown Land / FSR"},
-  {cat:"schlafen", name:"Squamish Valley FSR (Crown Land)", lat:50.06475, lng:-123.33795,
+  {cat:"schlafen", name:"Squamish Valley FSR (Crown Land)", unpaved:true, lat:50.06475, lng:-123.33795,
    note:"Erste km auch für grosse Fahrzeuge, weiter oben nur SUV/4x4; Plätze auf Kies- und Sandbänken am Fluss. Am Wochenende voll. Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    cost:"gratis (BC)",
    spaet:"Kein Check-in - aber Schotter, besser bei Tageslicht; am Wochenende früh da sein.",
    link:"https://www.untrammelledtravels.ca/squamish-valley-camping-squamish-valley-fsr",
    meta:"Squamish/Brackendale · Crown Land"},
-  {cat:"schlafen", name:"Callaghan Lake FSR (Crown Land)", lat:50.211096, lng:-123.196256,
+  {cat:"schlafen", name:"Callaghan Lake FSR (Crown Land)", unpaved:true, lat:50.211096, lng:-123.196256,
    note:"8 km Asphalt ab Hwy 99, dann 8 km ruppige Schotter-FSR; Lichtung am See mit Plumpsklo. Nur schneefrei ca. Mitte Juni bis Oktober. Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    warn:"8 km ruppige FSR - Hochdach/4x4 empfohlen",
    cost:"gratis (BC)",
    spaet:"Kein Check-in, aber die FSR im Dunkeln ist heikel - bei Tageslicht anfahren.",
    link:"https://bcparks.ca/callaghan-lake-park/",
    meta:"Whistler (Callaghan) · FSR"},
-  {cat:"schlafen", name:"Blowdown Creek FSR (Crown Land)", lat:50.44364, lng:-122.25315,
+  {cat:"schlafen", name:"Blowdown Creek FSR (Crown Land)", unpaved:true, lat:50.44364, lng:-122.25315,
    note:"Abzweig kurz nach Duffey Lake; erste ~10 km mit Aussicht, ruppig. Freies Crown Land, keine Ausstattung. Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    warn:"Ruppige FSR - Hochdach/4x4 nötig",
    cost:"gratis (BC)",
    spaet:"Kein Check-in, aber steile Schotter-FSR - nur bei Tageslicht sinnvoll.",
    link:"https://www.untrammelledtravels.ca/blowdown-pass-blowdown-fsr",
    meta:"Duffey Lake / Pemberton · FSR"},
-  {cat:"schlafen", name:"Skmana Lake Rec Site (FSR)", lat:50.874198, lng:-119.734399,
+  {cat:"schlafen", name:"Skmana Lake Rec Site (FSR)", unpaved:true, lat:50.874198, lng:-119.734399,
    note:"Ab Chase ~16 km Schotter (für SUV machbar); einfacher Forest-Rec-Site am See mit Tischen und Bootsrampe. Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    cost:"gratis (BC)",
    spaet:"Kein Check-in - aber lange Schotter-Anfahrt, besser bei Tageslicht.",
    link:"https://maps.campendium.com/ca/bc/nature/skmana-lake-trail-network-recreation-site",
    meta:"Chase / Shuswap · Rec Site / FSR"},
-  {cat:"schlafen", name:"Frisby Creek FSR (Crown Land)", lat:51.029, lng:-118.28,
+  {cat:"schlafen", name:"Frisby Creek FSR (Crown Land)", unpaved:true, lat:51.029, lng:-118.28,
    note:"Ab Westside Rd nördlich Revelstoke; Crown Land, Camping abseits der Strasse, letzte km felsig. Blick auf Lake Revelstoke. Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    warn:"Letzte km felsig - Hochdach/4x4",
    cost:"gratis (BC)",
    spaet:"Kein Check-in, aber die letzten km felsig - bei Tageslicht anfahren.",
    link:"https://www.trailsoffroad.com/CAN/british-columbia/scout-routes/2707-frisby-creek-road",
    meta:"Revelstoke · Crown Land / FSR"},
-  {cat:"schlafen", name:"Bush River FSR (Kinbasket)", lat:51.746854, lng:-117.523756,
+  {cat:"schlafen", name:"Bush River FSR (Kinbasket)", unpaved:true, lat:51.746854, lng:-117.523756,
    note:"Ab Golden lange Schotter-Anfahrt die Bush River FSR hoch zum Kinbasket Lake; 4 Plätze am See mit Plumpsklo und Bootsrampe. Non-Residents brauchen für BC-Crown-Land formal eine Authorization (FrontCounter BC), Durchsetzung ist aber lax.",
    warn:"Längerer Schotter-Abstecher nördl. Golden - Hochdach/SUV",
    cost:"gratis (BC)",
    spaet:"Kein Check-in - aber weiter Abstecher nördl. Golden auf Schotter, nur bei Tageslicht.",
    link:"https://www.sitesandtrailsbc.ca/",
    meta:"nördl. Golden (Kinbasket) · FSR"},
-  {cat:"schlafen", name:"Ghost PLUZ - Waiparous", lat:51.340111, lng:-114.968134,
+  {cat:"schlafen", name:"Ghost PLUZ - Waiparous", unpaved:true, lat:51.340111, lng:-114.968134,
    note:"Ab Cochrane via Hwy 40 nach Waiparous; Random Camping im Ghost Public Land Use Zone, min. 1 km von Rec-Areas, keine Ausstattung. Schotter meist SUV-tauglich.",
    warn:"Alberta: Public-Lands-Camping-Pass Pflicht (~30 CAD/Jahr, gilt auch für Ausländer)",
    cost:"~30 CAD PLUZ-Pass/Jahr (AB)",
@@ -851,7 +861,7 @@ const markers = [];
 PLACES.forEach(p => {
   const icon = L.divIcon({
     className:'',
-    html:`<div class="pin ${p.cat}">${CATS[p.cat].emoji}${p.warn ? '<span class="pin-badge">!</span>' : ''}${p.spaet ? '<span class="pin-moon">🌙</span>' : ''}</div>`,
+    html:`<div class="pin ${p.cat}">${CATS[p.cat].emoji}${p.warn ? '<span class="pin-badge">!</span>' : ''}${p.spaet ? '<span class="pin-moon">🌙</span>' : ''}${p.unpaved ? '<span class="pin-nodrive">🚧</span>' : ''}</div>`,
     iconSize:[38,38], iconAnchor:[19,36]
   });
   const m = L.marker([p.lat, p.lng], {icon}).addTo(map);
@@ -871,13 +881,22 @@ function openSheet(p){
   w.hidden = !p.warn;
   document.getElementById('sheetNote').textContent = p.note;
   const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch(e){ return ''; } };
+  const linkKind = u => {
+    const h = host(u);
+    if(/parks\.canada\.ca$|\.gov\.bc\.ca$|(^|\.)alberta\.ca$|bcparks\.ca$|albertaparks\.ca$|sitesandtrailsbc\.ca$|whistler\.ca$|canmore\.ca$|bchydro\.com$/.test(h)) return 'Offizielle Seite';
+    if(/ioverlander|park4night|campendium|allstays|rvparky|wikicamps|campingrvbc|trailsoffroad|untrammelledtravels|casinocamper|freecampsites/.test(h)) return 'Community-Info';
+    if(/squamishchief|cbc\.ca|globalnews|rmoutlook|kamloopsthisweek|piquenewsmagazine/.test(h)) return 'Bericht';
+    return 'Website';
+  };
   const facts = document.getElementById('sheetFacts');
   let fh = '';
+  if(p.unpaved) fh += `<div class="fact fact-nodrive"><span>🚧</span><span><b>Zufahrt unbefestigt:</b> Schotter/Forststrasse - nicht mit deinem 2WD-Mietwagen (CDW/Versicherung erlischt).</span></div>`;
   if(p.dauer) fh += `<div class="fact"><span>🕒</span><span><b>Gehzeit:</b> ${esc(p.dauer)}</span></div>`;
   if(p.cost)  fh += `<div class="fact"><span>💲</span><span><b>Kosten:</b> ${esc(p.cost)}</span></div>`;
   if(p.spaet) fh += `<div class="fact"><span>🌙</span><span><b>Späte Ankunft:</b> ${esc(p.spaet)}</span></div>`;
   if(p.essen) fh += `<div class="fact"><span>🍴</span><span><b>Verpflegung:</b> ${esc(p.essen)}</span></div>`;
-  if(p.link)  fh += `<div class="fact"><span>🔗</span><span><a href="${esc(p.link)}" target="_blank" rel="noopener">Offizielle Website</a></span></div>`;
+  if(p.link)  fh += `<div class="fact"><span>🔗</span><span><a href="${esc(p.link)}" target="_blank" rel="noopener">${linkKind(p.link)} (${esc(host(p.link))})</a></span></div>`;
   facts.innerHTML = fh;
   facts.hidden = !fh;
   document.getElementById('sheetMeta').textContent = p.meta || '';
