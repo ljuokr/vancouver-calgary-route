@@ -845,7 +845,33 @@ const PLACES = [
    meta:"Whistler · Alta Lake→Green Lake · ~3 Std · Shuttle inkl."},
   {cat:"rnd", name:"Bären am Valley Trail (Lost Lake)", link:"https://hikeinwhistler.com/index.php/hiking-glossary/bears", cost:"Gratis; Valley Trail zu Fuss oder per Rad, Lost Lake Park mit Badestelle", warn:"Abstand halten (nie naehern, nie zwischen Baerin und Junge), nichts Essbares dabei, Hunde an die Leine; Baerenspray schadet nicht", lat:50.1212, lng:-122.9421,
    note:"Whistler hat eine der dichtesten Schwarzbär-Populationen BCs: früh morgens und abends grasen sie regelmässig auf dem Golfplatz beim Village und entlang des Valley Trails Richtung Lost Lake. Einfach langsam radeln oder gehen und die Augen offen halten - gratis Wildlife statt Zoo. Deer und Weisskopfseeadler gibt es obendrauf.",
-   meta:"Whistler · frueh morgens oder abends · gratis"}
+   meta:"Whistler · frueh morgens oder abends · gratis"},
+
+  // ---------- Icefields Parkway (Tagestour ab Lake Louise, Variante 2) ----------
+  {cat:"aussicht", name:"Crowfoot Glacier Viewpoint", link:"https://parks.canada.ca/pn-np/ab/banff/visit/les10-top10/glaciers-icefields", dauer:"5-10 Min", lat:51.6631, lng:-116.4384,
+   note:"Erster Fotostopp rund 35 km ab Lake Louise: Hängegletscher am Crowfoot Mountain, direkt vom Strassenparkplatz sichtbar. Von den drei namensgebenden Krähenfuss-Zehen ist die unterste bereits weggeschmolzen. Nur 2 Fahrminuten vor dem Bow Lake.",
+   meta:"Icefields Pkwy · Roadside-Viewpoint"},
+  {cat:"must", name:"Bow Lake & Num-Ti-Jah Lodge", link:"https://parks.canada.ca/pn-np/ab/banff/visit/les10-top10/glaciers-icefields", dauer:"30-45 Min Uferweg", lat:51.6791, lng:-116.4645,
+   note:"Türkisblauer See direkt an der Strasse, gespeist vom Bow-Gletscher im Wapta Icefield. Flacher Uferweg ab dem Parkplatz bei der historischen Num-Ti-Jah Lodge mit dem roten Dach. Wer Zeit hat, verlängert Richtung Bow Glacier Falls.",
+   meta:"Icefields Pkwy · Option Bow Glacier Falls 8,4 km / +155 hm"},
+  {cat:"stopp", name:"Mistaya Canyon", link:"https://parks.canada.ca/pn-np/ab/banff/visit/les10-top10/glaciers-icefields", dauer:"20-30 Min", lat:51.9495, lng:-116.7124,
+   note:"Kurzer Abstieg vom Strassenparkplatz zu einer engen Kalkstein-Schlucht mit Brücke, Strudeltöpfen und tosendem Gletscherwasser. Wirkt überraschend wild für einen 10-Minuten-Stopp. Der Fels an der Kante ist glatt poliert - nicht über die Absperrung.",
+   meta:"Icefields Pkwy · ca. 1 km retour, ~60 hm Abstieg"},
+  {cat:"stopp", name:"Saskatchewan River Crossing", link:"https://www.thecrossingresort.com/", cost:"Benzin und Essen deutlich teurer als in Lake Louise/Banff", dauer:"15-30 Min", warn:"Einzige Tankstelle der ganzen Strecke, nur saisonal/tagsueber - besser vorher in Lake Louise volltanken", lat:51.9733, lng:-116.7458,
+   note:"Resort am Abzweig des Highway 11, einziger Versorgungspunkt des Parkway: Tankstelle, Restaurant und Pub, Laden, Gratis-WC. Als Notnagel fürs Tanken und für Kaffee praktisch, sonst kein Muss.",
+   meta:"Icefields Pkwy · Tankstelle, Restaurant, WC"},
+  {cat:"aussicht", name:"Big Bend & Panther Falls", link:"https://parks.canada.ca/pn-np/ab/banff/visit/les10-top10/glaciers-icefields", dauer:"20-30 Min", warn:"Dickhornschafe stehen hier oft auf der Fahrbahn - langsam fahren", lat:52.1803, lng:-117.0572,
+   note:"Blick zurück auf die einzige Haarnadelkurve des Parkway, wo sich die Strasse zum Icefield hochschraubt. Vom oberen Kies-Parkplatz führt ein kurzer, steiler Pfad hinunter zu den wenig bekannten Panther Falls (66 m). Die Weeping Wall 6 km südlich ist im Hochsommer meist nur ein Rinnsal.",
+   meta:"Icefields Pkwy · Panther Falls 0,6 km retour, steil"},
+  {cat:"wandern", name:"Parker Ridge", link:"https://parks.canada.ca/pn-np/ab/banff/visit/les10-top10/glaciers-icefields", dauer:"2-2,5 Std. retour", warn:"Nordhang: Anfang Juli oft noch Schneefelder, ab Mitte Juli meist frei; oben kalter Wind - Windjacke", lat:52.1915, lng:-117.1155,
+   note:"Der lohnendste Kurz-Hike der Tagestour: breite Serpentinen über die Baumgrenze auf einen Grat mit Panorama auf den rund 13 km langen Saskatchewan-Gletscher, den grössten Abfluss des Columbia Icefield. Für geübte Wanderer problemlos.",
+   meta:"Icefields Pkwy · 5-6 km retour · +250-300 hm"},
+  {cat:"wandern", name:"Wilcox Red Chairs", link:"https://parks.canada.ca/pn-np/ab/jasper/activ/experience/sentiers-trails/glaciers-icefields", cost:"Gratis - beste Gletschersicht ohne Ticket", dauer:"1-1,5 Std. (bis zum Pass 3-4 Std.)", warn:"Passhoehe teils bis Ende Juli schneebedeckt; bis zu den roten Stuehlen meist frei", lat:52.2183, lng:-117.1851,
+   note:"Start beim Wilcox Creek Campground: nach ca. 1,6 km stehen die roten Parks-Canada-Stühle mit Logenblick auf Athabasca-Gletscher, Dome Glacier und Mount Athabasca - deutlich eindrücklicher als von der Strasse. Dickhornschafe fast garantiert. Wer Zeit hat, geht weiter zum Wilcox Pass.",
+   meta:"Icefields Pkwy · Rote Stühle 3,5 km / +170 hm · Pass 8-10 km / +390 hm"},
+  {cat:"must", name:"Columbia Icefield / Athabasca-Gletscher", link:"https://parks.canada.ca/pn-np/ab/jasper/activ/experience/sentiers-trails/glaciers-icefields", cost:"Toe-Weg gratis; Ice Explorer+Skywalk-Kombi ab ~126 CAD Erw. (frueh buchen + Abfahrt nach 15.30 Uhr ~20% guenstiger)", dauer:"1-1,5 Std. zu Fuss; +2,5-3 Std. mit Ice Explorer/Skywalk", warn:"Absperrseile am Gletschertor zwingend respektieren - verdeckte Spalten und einbrechendes Eis haben hier Todesopfer gefordert; nie ohne Fuehrer aufs Eis", lat:52.2123, lng:-117.2326,
+   note:"Wendepunkt der Tagestour: vom Gratis-Parkplatz am Ende der Toe Road führt der Toe-of-the-Glacier-Weg bis zur Absperrung vor der Gletscherzunge, optional der Forefield Trail durchs Gletschervorfeld. Icefield Centre 2026 vom 1.5. bis 12.10. offen (Juli ca. 9-18 Uhr, Parken gratis). Ice Explorer und Skywalk sind für erfahrene Wanderer verzichtbar - Wilcox und Parker Ridge liefern die besseren Blicke gratis.",
+   meta:"Icefields Pkwy · Toe of the Glacier 1,8 km retour · Wendepunkt 127 km ab Lake Louise"}
 ];
 
 // ---------- Karte ----------
@@ -879,6 +905,23 @@ const ROUTE_COLOR = getComputedStyle(document.documentElement).getPropertyValue(
 const routeLine = L.polyline(ROUTE, {
   color:ROUTE_COLOR, weight:4, opacity:.85, dashArray:'2 9', lineCap:'round'
 }).addTo(map).bindTooltip('Route: Sea-to-Sky / Whistler & Trans-Canada', {sticky:true});
+
+// Abstecher: Icefields Parkway (Tagestour Lake Louise -> Columbia Icefield retour)
+const SPUR = [
+  [51.4252,-116.1789], // Lake Louise
+  [51.6631,-116.4384], // Crowfoot
+  [51.6791,-116.4645], // Bow Lake
+  [51.7169,-116.5265], // Peyto / Bow Summit
+  [51.9495,-116.7124], // Mistaya Canyon
+  [51.9733,-116.7458], // Saskatchewan Crossing
+  [52.1803,-117.0572], // Big Bend
+  [52.1915,-117.1155], // Parker Ridge
+  [52.2123,-117.2326]  // Columbia Icefield
+];
+L.polyline(SPUR, {
+  color:ROUTE_COLOR, weight:3, opacity:.7, dashArray:'10 7', lineCap:'round'
+}).addTo(map).bindTooltip('Abstecher: Icefields Parkway (Tagestour)', {sticky:true});
+
 
 // Start-/Zielpunkte markieren
 [['Vancouver',ROUTE[0]],['Calgary',ROUTE[ROUTE.length-1]]].forEach(([n,ll]) => {
@@ -1127,13 +1170,15 @@ locateBtn.addEventListener('dblclick', stopLocate);
       for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++) set.add(z+'/'+(x+dx)+'/'+(y+dy));
     };
     const dense = [];
-    for(let i=0;i<ROUTE.length-1;i++){
-      const a1=ROUTE[i][0],o1=ROUTE[i][1],a2=ROUTE[i+1][0],o2=ROUTE[i+1][1];
-      const d = Math.hypot((a2-a1)*111,(o2-o1)*111*Math.cos((a1+a2)/2*Math.PI/180));
-      const n = Math.max(1, Math.floor(d));
-      for(let k=0;k<n;k++) dense.push([a1+(a2-a1)*k/n, o1+(o2-o1)*k/n]);
-    }
-    dense.push(ROUTE[ROUTE.length-1]);
+    [ROUTE, (typeof SPUR !== 'undefined' ? SPUR : [])].forEach(linie => {
+      for(let i=0;i<linie.length-1;i++){
+        const a1=linie[i][0],o1=linie[i][1],a2=linie[i+1][0],o2=linie[i+1][1];
+        const d = Math.hypot((a2-a1)*111,(o2-o1)*111*Math.cos((a1+a2)/2*Math.PI/180));
+        const n = Math.max(1, Math.floor(d));
+        for(let k=0;k<n;k++) dense.push([a1+(a2-a1)*k/n, o1+(o2-o1)*k/n]);
+      }
+      if(linie.length) dense.push(linie[linie.length-1]);
+    });
     for(let z=6;z<=11;z++) dense.forEach(p => add(z, t(p[0],p[1],z)[0], t(p[0],p[1],z)[1]));
     [12,13].forEach(z => PLACES.forEach(p => add(z, t(p.lat,p.lng,z)[0], t(p.lat,p.lng,z)[1])));
     const suf = L.Browser.retina ? '@2x.png' : '.png';
@@ -1155,7 +1200,7 @@ locateBtn.addEventListener('dblclick', stopLocate);
       render('<h3>Offline-Karte bereit</h3>Stand ' + stand + ' · ' + n + ' Kacheln gespeichert. Route und alle Punkte funktionieren ohne Empfang (Zoom bis Stufe 13 scharf).' +
         '<div class="row"><button id="ofDl">Aktualisieren</button><button class="sec" id="ofX">Schliessen</button></div>');
     } else {
-      render('<h3>Karte für unterwegs speichern</h3>Lädt den Routen-Korridor und die Umgebung aller Punkte (~1500 Kacheln, ca. 25-60 MB). Am besten im WLAN.' +
+      render('<h3>Karte für unterwegs speichern</h3>Lädt den Routen-Korridor und die Umgebung aller Punkte (~1800 Kacheln, ca. 30-70 MB). Am besten im WLAN.' +
         '<div class="row"><button id="ofDl">Jetzt laden</button><button class="sec" id="ofX">Schliessen</button></div>');
     }
     document.getElementById('ofDl').onclick = laden;

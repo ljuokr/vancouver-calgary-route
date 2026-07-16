@@ -38,7 +38,8 @@ self.addEventListener('fetch', e => {
   // Die Seite selbst: frisch vom Netz, offline aus dem Cache
   if (e.request.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).then(res => {
+      // no-cache: immer beim Server revalidieren, sonst klebt der Browser-HTTP-Cache
+      fetch(e.request.url, { cache: 'no-cache' }).then(res => {
         const copy = res.clone();
         caches.open(SHELL).then(c => c.put('./', copy));
         return res;
